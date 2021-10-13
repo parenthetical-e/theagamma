@@ -1,4 +1,4 @@
-# agamma
+# theagamma
 
 Costs and benefits of gamma oscillations?
 
