@@ -5,20 +5,12 @@ from AuxiliarFunctions import *
 from brian2 import *
 import numpy as np
 from scipy import integrate
-import matplotlib
-import matplotlib.pyplot as plt
-from mpl_toolkits.axes_grid1.inset_locator import *
+# import matplotlib
+# import matplotlib.pyplot as plt
+# from mpl_toolkits.axes_grid1.inset_locator import *
 import random
 """
-This code describes the implementation of the ING networkt developed in the following paper:
-
-!!!!!!
-
-
-If you use this code, please cite:
- 
-
-
+This code describes the implementation of the ING network
 """
 
 #========================================================================
@@ -242,6 +234,8 @@ rate_changes = TimedArray(ExtFreqPattern * Hz, dt=defaultclock.dt)
 ExternalStimulus = NeuronGroup(NE,
                                'rates = rate_changes(t) : Hz',
                                threshold='rand() < rates * dt')
+ratemonStimulus = PopulationRateMonitor(ExternalStimulus)
+spikemonStimulus = SpikeMonitor(ExternalStimulus, variables='t')
 
 #==========================================================================
 #Independent External Stimulus (constant)
@@ -375,14 +369,17 @@ con_ExtStN_I.connect(p=prob_p)
 #FS
 statemonI = StateMonitor(neuronsI, ['v'], record=[0])
 spikemonI = SpikeMonitor(neuronsI, variables='t')
+ratemonI = PopulationRateMonitor(neuronsI)
 
 #FS2
 statemonIosc = StateMonitor(neuronsIosc, ['v'], record=[0])
 spikemonIosc = SpikeMonitor(neuronsIosc, variables='t')
+ratemonIosc = PopulationRateMonitor(neuronsIosc)
 
 #RS
 statemonE = StateMonitor(neuronsE, ['v'], record=[0])
 spikemonE = SpikeMonitor(neuronsE, variables='t')
+ratemonE = PopulationRateMonitor(neuronsE)
 
 run(t_simulation)
 
@@ -579,128 +576,128 @@ Phase_time, LFPFiltered_main, LFP_thatOverLapsFileteredOne, Envelope_main, Oscil
 #Adding spike picks to membrane potential:
 #---------------------------------------------
 
-Membrane_time = statemonI[0].t / second
-Membrane_I = statemonI[0].v / mV
-Membrane_Iosc = statemonIosc[0].v / mV
-Membrane_E = statemonE[0].v / mV
+# Membrane_time = statemonI[0].t / second
+# Membrane_I = statemonI[0].v / mV
+# Membrane_Iosc = statemonIosc[0].v / mV
+# Membrane_E = statemonE[0].v / mV
 
-#---Spike Times per Neuron----
+# #---Spike Times per Neuron----
 
-SpikeTimesE = spikemonE.all_values()
-SpikeTimesI = spikemonI.all_values()
-SpikeTimesIosc = spikemonIosc.all_values()
+# SpikeTimesE = spikemonE.all_values()
+# SpikeTimesI = spikemonI.all_values()
+# SpikeTimesIosc = spikemonIosc.all_values()
 
-#-------------------------------------
+# #-------------------------------------
 
-v_nicerI = Membrane_I
-for T in SpikeTimesI['t'][0]:
-    k = int(T / defaultclock.dt)
-    v_nicerI[k] = 0  #mV
+# v_nicerI = Membrane_I
+# for T in SpikeTimesI['t'][0]:
+#     k = int(T / defaultclock.dt)
+#     v_nicerI[k] = 0  #mV
 
-v_nicerIosc = Membrane_Iosc
-for T in SpikeTimesIosc['t'][0]:
-    k = int(T / defaultclock.dt)
-    v_nicerIosc[k] = 0  #mV
+# v_nicerIosc = Membrane_Iosc
+# for T in SpikeTimesIosc['t'][0]:
+#     k = int(T / defaultclock.dt)
+#     v_nicerIosc[k] = 0  #mV
 
-v_nicerE = Membrane_E
-for T in SpikeTimesE['t'][0]:
-    k = int(T / defaultclock.dt)
-    v_nicerE[k] = 0  #mV
+# v_nicerE = Membrane_E
+# for T in SpikeTimesE['t'][0]:
+#     k = int(T / defaultclock.dt)
+#     v_nicerE[k] = 0  #mV
 
 #---------------------------------------------
 #Plotting:
 #---------------------------------------------
 
-Fig = plt.figure(figsize=(20, 28))
-plt.subplots_adjust(hspace=0.7, wspace=0.4)
+# Fig = plt.figure(figsize=(20, 28))
+# plt.subplots_adjust(hspace=0.7, wspace=0.4)
 
-matplotlib.rc('xtick', labelsize=30)
-matplotlib.rc('ytick', labelsize=30)
+# matplotlib.rc('xtick', labelsize=30)
+# matplotlib.rc('ytick', labelsize=30)
 
-figa = Fig.add_subplot(411)
-plt.title('External Drive', fontsize=30)
-plt.plot(ExtFreqPattern_time,
-         ExtFreqPattern + ExtFreq / Hz,
-         ls='--',
-         color='k',
-         linewidth=4)
-plt.ylabel('Poissonian \n Frequency [Hz]', fontsize=30)
-plt.xlabel('Time [s]', fontsize=30)
-plt.xlim(2.2, 3)
+# figa = Fig.add_subplot(411)
+# plt.title('External Drive', fontsize=30)
+# plt.plot(ExtFreqPattern_time,
+#          ExtFreqPattern + ExtFreq / Hz,
+#          ls='--',
+#          color='k',
+#          linewidth=4)
+# plt.ylabel('Poissonian \n Frequency [Hz]', fontsize=30)
+# plt.xlabel('Time [s]', fontsize=30)
+# plt.xlim(2.2, 3)
 
-figa = Fig.add_subplot(412)
-len_set = 1000
-plt.title('Raster Plot', fontsize=30)
-plt.scatter(spikemonI.t[spikemonI.i < len_set] / second,
-            spikemonI.i[spikemonI.i < len_set],
-            color='red',
-            s=50,
-            label="FS")
-plt.scatter(spikemonIosc.t[spikemonIosc.i < len_set] / second,
-            spikemonIosc.i[spikemonIosc.i < len_set] + len_set,
-            color='darkred',
-            s=50,
-            label="FS2")
-plt.scatter(spikemonE.t[spikemonE.i < len_set] / second,
-            spikemonE.i[spikemonE.i < len_set] + 2 * len_set,
-            color='green',
-            s=50,
-            label="RS")
-plt.legend(loc='best', fontsize=30)
-plt.xlabel('Time [s]', fontsize=30)
-plt.ylabel('Neuron Index', fontsize=30)
-plt.xlim(2.2, 3)
+# figa = Fig.add_subplot(412)
+# len_set = 1000
+# plt.title('Raster Plot', fontsize=30)
+# plt.scatter(spikemonI.t[spikemonI.i < len_set] / second,
+#             spikemonI.i[spikemonI.i < len_set],
+#             color='red',
+#             s=50,
+#             label="FS")
+# plt.scatter(spikemonIosc.t[spikemonIosc.i < len_set] / second,
+#             spikemonIosc.i[spikemonIosc.i < len_set] + len_set,
+#             color='darkred',
+#             s=50,
+#             label="FS2")
+# plt.scatter(spikemonE.t[spikemonE.i < len_set] / second,
+#             spikemonE.i[spikemonE.i < len_set] + 2 * len_set,
+#             color='green',
+#             s=50,
+#             label="RS")
+# plt.legend(loc='best', fontsize=30)
+# plt.xlabel('Time [s]', fontsize=30)
+# plt.ylabel('Neuron Index', fontsize=30)
+# plt.xlim(2.2, 3)
 
-figa = Fig.add_subplot(413)
-plt.title('Membrane Potential', fontsize=30)
-plt.plot(Membrane_time,
-         v_nicerE,
-         color='green',
-         linewidth=4,
-         alpha=0.7,
-         label='Random RS Neuron')
-plt.plot(Membrane_time,
-         v_nicerI,
-         color='red',
-         linewidth=4,
-         alpha=0.7,
-         label='Random FS Neuron')
-plt.plot(Membrane_time,
-         v_nicerIosc,
-         color='darkred',
-         linewidth=4,
-         alpha=0.7,
-         label='Random FS2 Neuron')
-plt.legend(loc='best', fontsize=30)
-plt.xlabel('Time [s]', fontsize=30)
-plt.ylabel('V [mV]', fontsize=30)
-plt.xlim(2.2, 3)
+# figa = Fig.add_subplot(413)
+# plt.title('Membrane Potential', fontsize=30)
+# plt.plot(Membrane_time,
+#          v_nicerE,
+#          color='green',
+#          linewidth=4,
+#          alpha=0.7,
+#          label='Random RS Neuron')
+# plt.plot(Membrane_time,
+#          v_nicerI,
+#          color='red',
+#          linewidth=4,
+#          alpha=0.7,
+#          label='Random FS Neuron')
+# plt.plot(Membrane_time,
+#          v_nicerIosc,
+#          color='darkred',
+#          linewidth=4,
+#          alpha=0.7,
+#          label='Random FS2 Neuron')
+# plt.legend(loc='best', fontsize=30)
+# plt.xlabel('Time [s]', fontsize=30)
+# plt.ylabel('V [mV]', fontsize=30)
+# plt.xlim(2.2, 3)
 
-figa = Fig.add_subplot(414)
-plt.title('Simulated LFP', fontsize=30)
-plt.plot(Phase_time, LFP_thatOverLapsFileteredOne, color='k', label='Raw LFP')
-plt.plot(Phase_time,
-         LFPFiltered_main,
-         linewidth=4,
-         color='orange',
-         label="Filtered LFP " + str(int(lowcut_main)) + "-" +
-         str(int(highcut_main)) + " Hz")
-plt.plot(Phase_time,
-         Envelope_main,
-         linewidth=4,
-         color='purple',
-         label="Hilbert Envelope")
+# figa = Fig.add_subplot(414)
+# plt.title('Simulated LFP', fontsize=30)
+# plt.plot(Phase_time, LFP_thatOverLapsFileteredOne, color='k', label='Raw LFP')
+# plt.plot(Phase_time,
+#          LFPFiltered_main,
+#          linewidth=4,
+#          color='orange',
+#          label="Filtered LFP " + str(int(lowcut_main)) + "-" +
+#          str(int(highcut_main)) + " Hz")
+# plt.plot(Phase_time,
+#          Envelope_main,
+#          linewidth=4,
+#          color='purple',
+#          label="Hilbert Envelope")
 
-plt.axhline(y=mean(Envelope_main), linestyle='-', linewidth=4,
-            color='m')  #,label=r'Mean Envelope ($\mu$)')
-plt.axhline(y=mean(Envelope_main) + np.std(Envelope_main),
-            linestyle='--',
-            linewidth=4,
-            color='m')  #,label=r'$\mu$+$\sigma$')
-plt.legend(loc='best', fontsize=30)
-plt.xlabel('Time [s]', fontsize=30)
-plt.xlim(2.2, 3)
-figa.set_yticks([])
-plt.tight_layout()
-plt.savefig("img/RS-FS-FS2.png")
-#plt.show()
+# plt.axhline(y=mean(Envelope_main), linestyle='-', linewidth=4,
+#             color='m')  #,label=r'Mean Envelope ($\mu$)')
+# plt.axhline(y=mean(Envelope_main) + np.std(Envelope_main),
+#             linestyle='--',
+#             linewidth=4,
+#             color='m')  #,label=r'$\mu$+$\sigma$')
+# plt.legend(loc='best', fontsize=30)
+# plt.xlabel('Time [s]', fontsize=30)
+# plt.xlim(2.2, 3)
+# figa.set_yticks([])
+# plt.tight_layout()
+# plt.savefig("img/RS-FS-FS2.png")
+# #plt.show()
