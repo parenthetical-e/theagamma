@@ -10,7 +10,7 @@ from theoc.metrics import normalize
 from theoc.oc import save_result
 
 #========================================================================
-from AuxiliarFunctions import *
+from util import *
 from brian2 import *
 
 
@@ -673,8 +673,8 @@ def ing_coupling(file_name=None, stim_seed=None, seed=None):
         'dMI': d_deltas,
         'H': d_hs,
         'p_y': d_py,
-        'spikes': d_spikes,  
-        'rates': d_rates,  
+        'spikes': d_spikes,
+        'rates': d_rates,
         'lfp': d_lfps,
         'times': times
     }
