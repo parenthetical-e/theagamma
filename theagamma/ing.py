@@ -20,6 +20,7 @@ from brian2.units import amp
 def ing_coupling(num_pop=25000,
                  num_stim=100,
                  file_name=None,
+                 output=True,
                  stim_seed=None,
                  seed=None):
     """The ING network"""
@@ -667,16 +668,18 @@ def ing_coupling(num_pop=25000,
     ##########################################################################s
 
     d_spikes = {}
-    d_spikes["E"] = (spikemonE.t, spikemonE.i)
-    d_spikes["E"] = (spikemonI.t, spikemonI.i)
-    d_spikes["osc"] = (spikemonIosc.t, spikemonIosc.i)
-    d_spikes["stim_p"] = (spikemonStimulus.t, spikemonStimulus.i)
+    d_spikes["E"] = (np.asarray(spikemonE.t), np.asarray(spikemonE.i))
+    d_spikes["E"] = (np.asarray(spikemonI.t), np.asarray(spikemonI.i))
+    d_spikes["osc"] = (np.asarray(spikemonIosc.t), np.asarray(spikemonIosc.i))
+    d_spikes["stim_p"] = (np.asarray(spikemonStimulus.t),
+                          np.asarray(spikemonStimulus.i))
 
     d_rates = {}
-    d_rates["E"] = (ratemonE.t, ratemonE.rate)
-    d_rates["E"] = (ratemonI.t, ratemonI.rate)
-    d_rates["osc"] = (ratemonIosc.t, ratemonIosc.rate)
-    d_rates["stim_p"] = (ratemonStimulus.t, ratemonStimulus.rate)
+    d_rates["E"] = (np.asarray(ratemonE.t), np.asarray(ratemonE.rate))
+    d_rates["E"] = (np.asarray(ratemonI.t), np.asarray(ratemonI.rate))
+    d_rates["osc"] = (np.asarray(ratemonIosc.t), np.asarray(ratemonIosc.rate))
+    d_rates["stim_p"] = (np.asarray(ratemonStimulus.t),
+                         np.asarray(ratemonStimulus.rate))
 
     result = {
         'MI': d_mis,
@@ -691,8 +694,8 @@ def ing_coupling(num_pop=25000,
 
     if file_name is not None:
         save_result(file_name, result)
-
-    return result
+    if output:
+        return result
 
 
 # Create CL
