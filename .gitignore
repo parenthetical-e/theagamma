@@ -1,6 +1,9 @@
 # Mac
 *.DS_Store
 
+# Data
+*.pkl
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
