@@ -689,7 +689,7 @@ def ing_coupling(num_pop=25000,
         'times': times
     }
 
-    if save is not None:
+    if file_name is not None:
         save_result(file_name, result)
 
     return result
