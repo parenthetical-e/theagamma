@@ -211,11 +211,12 @@ def ing_coupling(num_pop=25000,
     neuronsIosc.ge = 0. * nS
 
     #Adaptation Current
-    # TODO this is causing an error - very doo
-    # these vars do prob need to zeroed out. Fixmee
-    # neuronsI.w = 0. * amp
-    # neuronsE.w = 0. * amp
-    # neuronsIosc.w = 0. * amp
+    # TODO * amp was is causing a locals error - very odd.
+    # if there is no unit error, and these is not, then
+    # this below should be ok? Not sure how to check that...
+    neuronsI.w = 0.  #* amp
+    neuronsE.w = 0.  #* amp
+    neuronsIosc.w = 0.  #* amp
 
     ##########################################################################
     #External Stimulus
