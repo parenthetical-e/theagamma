@@ -662,7 +662,7 @@ def ing_coupling(num_pop=25000,
         (10**-3))  #Phase from -pi to pi -> pick apears approx at 0
 
     #log
-    d_lfps["lfp_times"] = Phase_time
+    d_lfps["lfp_gamma_times"] = Phase_time
     d_lfps["lfp_gamma"] = LFPFiltered_main
     d_lfps["lfp_gamma_hilbert"] = Envelope_main
 
@@ -689,14 +689,14 @@ def ing_coupling(num_pop=25000,
 
     d_spikes = {}
     d_spikes["E"] = (np.asarray(spikemonE.t), np.asarray(spikemonE.i))
-    d_spikes["E"] = (np.asarray(spikemonI.t), np.asarray(spikemonI.i))
+    d_spikes["I"] = (np.asarray(spikemonI.t), np.asarray(spikemonI.i))
     d_spikes["osc"] = (np.asarray(spikemonIosc.t), np.asarray(spikemonIosc.i))
     d_spikes["stim_p"] = (np.asarray(spikemonStimulus.t),
                           np.asarray(spikemonStimulus.i))
 
     d_rates = {}
     d_rates["E"] = (np.asarray(ratemonE.t), np.asarray(ratemonE.rate))
-    d_rates["E"] = (np.asarray(ratemonI.t), np.asarray(ratemonI.rate))
+    d_rates["I"] = (np.asarray(ratemonI.t), np.asarray(ratemonI.rate))
     d_rates["osc"] = (np.asarray(ratemonIosc.t), np.asarray(ratemonIosc.rate))
     d_rates["stim_p"] = (np.asarray(ratemonStimulus.t),
                          np.asarray(ratemonStimulus.rate))
