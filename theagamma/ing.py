@@ -11,6 +11,7 @@ from theoc.metrics import normalize
 from theoc.oc import save_result
 from scipy.signal import welch
 from copy import deepcopy
+from neurodsp.spectral import compute_spectrum
 
 #========================================================================
 from theagamma.util import *
@@ -20,7 +21,7 @@ from brian2.units import amp
 
 
 def ing_coupling(num_pop=25000,
-                 num_stim=100,
+                 num_stim=500,
                  file_name=None,
                  output=True,
                  stim_seed=None,
@@ -37,6 +38,7 @@ def ing_coupling(num_pop=25000,
     start_scope()
     t_simulation = 6 * second
     defaultclock.dt = 0.1 * ms
+    srate = int(1 / float(defaultclock.dt))
 
     ########################################################################
     #Network Structure
@@ -65,6 +67,7 @@ def ing_coupling(num_pop=25000,
     prob_Pioi = 0.15  #(FS2->FS)
 
     prob_p = 0.02  #External
+    prob_ext = 0.2  # ExternalStimulus only
 
     ######################################################################
     #Reescaling Synaptic Weights based on Synaptic Decay
@@ -377,19 +380,19 @@ def ing_coupling(num_pop=25000,
                                neuronsIosc,
                                on_pre='ge_post += Ge_extIosc',
                                delay=0. * ms)
-    con_ExtStN_Iosc.connect(p=prob_p)
+    con_ExtStN_Iosc.connect(p=prob_ext)
 
     con_ExtStN_E = Synapses(ExternalStimulus,
                             neuronsE,
                             on_pre='ge_post += Ge_extE',
                             delay=0. * ms)
-    con_ExtStN_E.connect(p=prob_p)
+    con_ExtStN_E.connect(p=prob_ext)
 
     con_ExtStN_I = Synapses(ExternalStimulus,
                             neuronsI,
                             on_pre='ge_post += Ge_extI',
                             delay=0. * ms)
-    con_ExtStN_I.connect(p=prob_p)
+    con_ExtStN_I.connect(p=prob_ext)
 
     ###########################################################################
     # Simulation
@@ -673,10 +676,13 @@ def ing_coupling(num_pop=25000,
     d_centers = {}
     d_specs = {}
     for k in ["lfp", "lfp_gamma"]:
-        freq, spectrum = welch(d_lfps[k],
-                               fs=1000,
-                               scaling='spectrum',
-                               average='median')
+        freqs, spectrum = compute_spectrum(
+            result["lfp"]["lfp"],
+            fs=srate,
+            method="welch",
+            avg_type="mean",
+            nperseg=srate * 2,
+        )
         max_i = np.argmax(spectrum)
         d_powers[k] = spectrum[max_i]
         d_centers[k] = freq[max_i]
@@ -712,7 +718,10 @@ def ing_coupling(num_pop=25000,
         'spectrum': d_specs,
         'power': d_powers,
         'center': d_centers,
-        'times': times
+        'times': times,
+        'srate': srate,
+        'dt': float(defaultclock.dt),
+        't': float(t_simulation)
     }
 
     if file_name is not None:
