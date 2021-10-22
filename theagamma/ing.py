@@ -1,5 +1,6 @@
 #========================================================================
 import numpy as np
+import fire
 
 from fakespikes import neurons, rates
 from theoc.lfp import create_lfps
@@ -10,15 +11,22 @@ from theoc.metrics import normalize
 from theoc.oc import save_result
 
 #========================================================================
-from util import *
+from theagamma.util import *
 from brian2 import *
+from brian2.units import *
+from brian2.units import amp
 
 
-def ing_coupling(file_name=None, stim_seed=None, seed=None):
+def ing_coupling(num_pop=25000,
+                 num_stim=100,
+                 file_name=None,
+                 stim_seed=None,
+                 seed=None):
     """The ING network"""
 
     #========================================================================
     #init
+    seed_value = seed
     # np.random.seed(seed)
 
     # This is just to make sure that any Brian objects created before
@@ -31,7 +39,7 @@ def ing_coupling(file_name=None, stim_seed=None, seed=None):
     #Network Structure
     ########################################################################
 
-    N = 25000
+    N = num_pop
     Percentage = 0.2
 
     NE = int(N * 4. / 5.)
@@ -221,13 +229,13 @@ def ing_coupling(file_name=None, stim_seed=None, seed=None):
     #params
 
     priv_std = 0
-    min_rate = .1
+    min_rate = 0.1
     stim_rate = 2
-    frac_std = .01
+    frac_std = 0.01
     stim_std = frac_std * stim_rate
 
     #init poisson pop
-    PoissonExternalStimulus = neurons.Spikes(int(NE),
+    PoissonExternalStimulus = neurons.Spikes(int(num_stim),
                                              float(t_simulation),
                                              dt=float(defaultclock.dt),
                                              seed=seed_value)
@@ -533,13 +541,13 @@ def ing_coupling(file_name=None, stim_seed=None, seed=None):
     #
 
     #----------------------------------------------
-    """
-    These parameters were taken from the article:
-    Telenczuk B, Telenczuk M, Destexhe A (2020)
-    A kernel-based method to calculate local field
-    potentials from networks of spiking neurons
-    Journal of Neuroscience Methods
-    """
+    # """
+    # These parameters were taken from the article:
+    # Telenczuk B, Telenczuk M, Destexhe A (2020)
+    # A kernel-based method to calculate local field
+    # potentials from networks of spiking neurons
+    # Journal of Neuroscience Methods
+    # """
     #----------------------------------------------
 
     time_resolution = 0.1  # time resolution
@@ -583,15 +591,15 @@ def ing_coupling(file_name=None, stim_seed=None, seed=None):
     ##########################################################################
     #LFP Calculation Functions
     ##########################################################################
-    """
-    This code was taken from the article: Telenczuk B, Telenczuk M, Destexhe A (2020)
-    A kernel-based method to calculate local field potentials from networks of spiking neurons
-    Journal of Neuroscience Methods
+    # """
+    # This code was taken from the article: Telenczuk B, Telenczuk M, Destexhe A (2020)
+    # A kernel-based method to calculate local field potentials from networks of spiking neurons
+    # Journal of Neuroscience Methods
 
-    The code is originaly available at: 
-    https://senselab.med.yale.edu/ModelDB/showmodel.cshtml?model=266508&file=%2fdemo_kernel%2fdemo_lfp_kernel.py#tabs-2
+    # The code is originaly available at:
+    # https://senselab.med.yale.edu/ModelDB/showmodel.cshtml?model=266508&file=%2fdemo_kernel%2fdemo_lfp_kernel.py#tabs-2
 
-    """
+    # """
 
     #=======================================
 
@@ -683,3 +691,8 @@ def ing_coupling(file_name=None, stim_seed=None, seed=None):
         save_result(file_name, result)
 
     return result
+
+
+# Create CL
+if __name__ == "__main__":
+    fire.Fire(ing_coupling)
