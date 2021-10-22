@@ -210,9 +210,9 @@ def ing_coupling(num_pop=25000,
     neuronsIosc.ge = 0. * nS
 
     #Adaptation Current
-    neuronsI.w = 0. * amp
-    neuronsE.w = 0. * amp
-    neuronsIosc.w = 0. * amp
+    # neuronsI.w = 0. * amp
+    # neuronsE.w = 0. * amp
+    # neuronsIosc.w = 0. * amp
 
     ##########################################################################
     #External Stimulus
@@ -244,11 +244,11 @@ def ing_coupling(num_pop=25000,
     stim_ref = rates.stim(times,
                           stim_rate,
                           stim_std,
-                          seed=int(stim_seed),
+                          seed=stim_seed,
                           min_rate=min_rate)
 
     #sample the ref
-    ExtFreqPattern = PoissonExternalStimulus.poisson(stim_ref)
+    ExtFreqPattern = PoissonExternalStimulus.poisson(stim_ref).sum(1)
 
     #======================
     # ...baack to Org code
@@ -405,11 +405,11 @@ def ing_coupling(num_pop=25000,
     ratemonE = PopulationRateMonitor(neuronsE)
 
     #RUN#
-    run(t_simulation, report='text', report_period=0.1 * second)
+    run(t_simulation, report=ProgressBar(), report_period=0.1 * second)
 
-    #############################################################################
+    ##########################################################################
     # Mutual information calculations
-    #############################################################################
+    ##########################################################################
 
     #!!!!!!!!!!!!!!!!!!!!!
     #From the OC codebase
