@@ -9,6 +9,8 @@ from theoc.metrics import discrete_entropy
 from theoc.metrics import discrete_mutual_information
 from theoc.metrics import normalize
 from theoc.oc import save_result
+from scipy.signal import welch
+from copy import deepcopy
 
 #========================================================================
 from theagamma.util import *
@@ -664,6 +666,23 @@ def ing_coupling(num_pop=25000,
     d_lfps["lfp_gamma"] = LFPFiltered_main
     d_lfps["lfp_gamma_hilbert"] = Envelope_main
 
+    ############################################################################
+    #Extract spectrum, and peak powers
+    ############################################################################
+    d_powers = {}
+    d_centers = {}
+    d_specs = {}
+    for k in ["lfp", "lfp_gamma"]:
+        freq, spectrum = welch(d_lfps[k],
+                               fs=1000,
+                               scaling='spectrum',
+                               average='median')
+        max_i = np.argmax(spectrum)
+        d_powers[k] = spectrum[max_i]
+        d_centers[k] = freq[max_i]
+        d_specs[k] = deepcopy(spectrum)
+    d_specs["freqs"] = freq
+
     ##########################################################################
     #Experimental output - select items
     ##########################################################################s
@@ -690,6 +709,9 @@ def ing_coupling(num_pop=25000,
         'spikes': d_spikes,
         'rates': d_rates,
         'lfp': d_lfps,
+        'spectrum': d_specs,
+        'power': d_powers,
+        'center': d_centers,
         'times': times
     }
 
