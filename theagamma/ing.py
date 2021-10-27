@@ -24,14 +24,15 @@ def ing_coupling(num_pop=25000,
                  num_stim=500,
                  file_name=None,
                  output=True,
+                 stim_mode='drift',
                  stim_seed=None,
-                 seed=None):
+                 net_seed=None):
     """The ING network"""
 
     #========================================================================
     #init
-    seed_value = seed
-    # np.random.seed(seed)
+    seed(net_seed)
+    np.random.seed(net_seed)
 
     # This is just to make sure that any Brian objects created before
     # the function is called aren't included in the next run of the simulation.
@@ -67,7 +68,6 @@ def ing_coupling(num_pop=25000,
     prob_Pioi = 0.15  #(FS2->FS)
 
     prob_p = 0.02  #External
-    prob_ext = 0.2  # ExternalStimulus only
 
     ######################################################################
     #Reescaling Synaptic Weights based on Synaptic Decay
@@ -227,37 +227,61 @@ def ing_coupling(num_pop=25000,
     #External Stimulus
     ##########################################################################
 
-    #==========================================================================
-    # Time Varying External Stimulus
-    #==========================================================================
-
     #!!!!!!!!!!!!!!!!!!!!!
     #From the OC codebase
     #!!!!!!!!!!!!!!!!!!!!!
+    if stim_mode == "drift":
+        #===================================================================
+        #Drifting - Time Varying External Stimulus
+        #===================================================================
+        prob_ext = 0.2  # ExternalStimulus onlys
+        priv_std = 0
+        min_rate = 0.1
+        stim_rate = 2
+        frac_std = 0.01
+        stim_std = frac_std * stim_rate
 
-    #params
+        #init poisson pop
+        PoissonExternalStimulus = neurons.Spikes(int(num_stim),
+                                                 float(t_simulation),
+                                                 dt=float(defaultclock.dt),
+                                                 seed=stim_seed)
+        #create stim reference
+        times = PoissonExternalStimulus.times
+        stim_ref = rates.stim(times,
+                              stim_rate,
+                              stim_std,
+                              seed=stim_seed,
+                              min_rate=min_rate)
 
-    priv_std = 0
-    min_rate = 0.1
-    stim_rate = 2
-    frac_std = 0.01
-    stim_std = frac_std * stim_rate
+        #sample the ref
+        ExtFreqPattern = PoissonExternalStimulus.poisson(stim_ref).sum(1)
+    elif stim_mode == 'step':
+        #================================================================
+        #Stepping - Correlated and Time Varying External Stimulus
+        #================================================================
+        prob_ext = 0.02  # ExternalStimulus onlys
 
-    #init poisson pop
-    PoissonExternalStimulus = neurons.Spikes(int(num_stim),
-                                             float(t_simulation),
-                                             dt=float(defaultclock.dt),
-                                             seed=seed_value)
-    #create stim reference
-    times = PoissonExternalStimulus.times
-    stim_ref = rates.stim(times,
-                          stim_rate,
-                          stim_std,
-                          seed=stim_seed,
-                          min_rate=min_rate)
+        #step parems
+        f_min = 0
+        f_max = 1.
+        MinPlatoTime = 150 * (10**-3)
+        MaxPlatoTime = 600 * (10**-3)
+        TransitionTime = 50 * (10**-3)
 
-    #sample the ref
-    ExtFreqPattern = PoissonExternalStimulus.poisson(stim_ref).sum(1)
+        #times
+        BaseTime = 1  #all in seconds (no units)
+        T_simulation = t_simulation / second
+        DT = defaultclock.dt / second
+
+        #!
+        _, ExtFreqPattern = IrregularFluctuationPattern(
+            f_min, f_max, TransitionTime, MinPlatoTime, MaxPlatoTime, BaseTime,
+            DT, T_simulation)
+
+        stim_ref = ExtFreqPattern  # dummy
+    else:
+        raise ValueError(f"stim_mode not known")
 
     #======================
     # ...baack to Org code
@@ -676,8 +700,8 @@ def ing_coupling(num_pop=25000,
     d_centers = {}
     d_specs = {}
     for k in ["lfp", "lfp_gamma"]:
-        freqs, spectrum = compute_spectrum(
-            result["lfp"]["lfp"],
+        freq, spectrum = compute_spectrum(
+            d_lfps[k],
             fs=srate,
             method="welch",
             avg_type="mean",
@@ -718,7 +742,6 @@ def ing_coupling(num_pop=25000,
         'spectrum': d_specs,
         'power': d_powers,
         'center': d_centers,
-        'times': times,
         'srate': srate,
         'dt': float(defaultclock.dt),
         't': float(t_simulation)
