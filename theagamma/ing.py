@@ -22,6 +22,7 @@ from brian2.units import amp
 
 def ing_coupling(num_pop=25000,
                  num_stim=500,
+                 p_stim=0.2,
                  file_name=None,
                  output=True,
                  stim_mode='drift',
@@ -234,7 +235,7 @@ def ing_coupling(num_pop=25000,
         #===================================================================
         #Drifting - Time Varying External Stimulus
         #===================================================================
-        prob_ext = 0.2  # ExternalStimulus onlys
+        prob_ext = p_stim  # ExternalStimulus onlys
         priv_std = 0
         min_rate = 0.1
         stim_rate = 2
@@ -260,7 +261,7 @@ def ing_coupling(num_pop=25000,
         #================================================================
         #Stepping - Correlated and Time Varying External Stimulus
         #================================================================
-        prob_ext = 0.02  # ExternalStimulus onlys
+        prob_ext = p_stim  # ExternalStimulus onlys
 
         #step parems
         f_min = 0

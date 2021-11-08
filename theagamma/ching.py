@@ -22,6 +22,7 @@ from brian2.units import amp
 
 def ching_coupling(num_pop=25000,
                    num_stim=500,
+                   p_stim=0.2,
                    file_name=None,
                    output=True,
                    stim_mode='drift',
@@ -234,7 +235,7 @@ def ching_coupling(num_pop=25000,
         #===================================================================
         #Drifting - Time Varying External Stimulus
         #===================================================================
-        prob_ext = 0.2  # ExternalStimulus onlys
+        prob_ext = p_stim  # ExternalStimulus onlys
         priv_std = 0
         min_rate = 0.1
         stim_rate = 2
@@ -260,7 +261,7 @@ def ching_coupling(num_pop=25000,
         #================================================================
         #Stepping - Correlated and Time Varying External Stimulus
         #================================================================
-        prob_ext = 0.02  # ExternalStimulus onlys
+        prob_ext = p_stim  # ExternalStimulus onlys
 
         #step parems
         f_min = 0
@@ -404,19 +405,19 @@ def ching_coupling(num_pop=25000,
                               neuronsEch,
                               on_pre='ge_post += Ge_extEch',
                               delay=0. * ms)
-    con_ExtStN_Ech.connect(p=prob_p)
+    con_ExtStN_Ech.connect(p=prob_ext)
 
     con_ExtStN_E = Synapses(ExternalStimulus,
                             neuronsE,
                             on_pre='ge_post += Ge_extE',
                             delay=0. * ms)
-    con_ExtStN_E.connect(p=prob_p)
+    con_ExtStN_E.connect(p=prob_ext)
 
     con_ExtStN_I = Synapses(ExternalStimulus,
                             neuronsI,
                             on_pre='ge_post += Ge_extI',
                             delay=0. * ms)
-    con_ExtStN_I.connect(p=prob_p)
+    con_ExtStN_I.connect(p=prob_ext)
 
     #######################################################################
     # Simulation
