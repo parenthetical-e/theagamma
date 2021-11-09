@@ -220,9 +220,9 @@ def ching_coupling(num_pop=25000,
     neuronsEch.ge = 0. * nS
 
     #Adaptation Current
-    neuronsI.w = 0. * amp
-    neuronsE.w = 0. * amp
-    neuronsEch.w = 0. * amp
+    neuronsI.w = 0.  #* amp
+    neuronsE.w = 0.  #* amp
+    neuronsEch.w = 0.  # * amp
 
     ##########################################################################
     #External Stimulus
