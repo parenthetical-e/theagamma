@@ -406,7 +406,7 @@ def ping_coupling(num_pop=25000,
     d_hs["E"] = discrete_entropy(y, m)
 
     #RS
-    y = normalize(ratemonIosc.rate / Hz)
+    y = normalize((ratemonE.rate + ratemonI.rate) / Hz)
     d_rescaled["osc"] = y
     d_py["osc"] = discrete_dist(y, m)
     d_mis["osc"] = discrete_mutual_information(y_ref, y, m)
@@ -526,9 +526,9 @@ def ping_coupling(num_pop=25000,
 
     Time_LFP = (np.arange(npts) * time_resolution) + starting_time  #in ms
 
-    ####################################################################################################
+    #######################################################################
     #LFP Calculation Functions
-    # ####################################################################################################
+    # #######################################################################
     # """
     # This code was taken from the article: Telenczuk B, Telenczuk M, Destexhe A (2020)
     # A kernel-based method to calculate local field potentials from networks of spiking neurons
@@ -564,15 +564,15 @@ def ping_coupling(num_pop=25000,
 
     lfp_E = calc_lfp(time_E, NeuronID_E, s_e)
     lfp_I = calc_lfp(time_I, NeuronID_I, s_i)
-    lfp_Iosc = calc_lfp(time_Iosc, NeuronID_Iosc, s_i)
+    # lfp_Iosc = calc_lfp(time_Iosc, NeuronID_Iosc, s_i)
 
-    LFP = lfp_E + lfp_I + lfp_Iosc
+    LFP = lfp_E + lfp_I  #+ lfp_Iosc
 
     #log
     d_lfps = {}
     d_lfps["E"] = lfp_E
     d_lfps["I"] = lfp_I
-    d_lfps["osc"] = lfp_Iosc
+    d_lfps["osc"] = LFP
     d_lfps["lfp"] = LFP
 
     ######################################################################

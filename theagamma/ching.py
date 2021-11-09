@@ -491,8 +491,15 @@ def ching_coupling(num_pop=25000,
     d_mis["E"] = discrete_mutual_information(y_ref, y, m)
     d_hs["E"] = discrete_entropy(y, m)
 
+    #RSch
+    y = normalize(ratemonEch.rate / Hz)
+    d_rescaled["Ech"] = y
+    d_py["Ech"] = discrete_dist(y, m)
+    d_mis["Ech"] = discrete_mutual_information(y_ref, y, m)
+    d_hs["Ech"] = discrete_entropy(y, m)
+
     #RS
-    y = normalize(ratemonIosc.rate / Hz)
+    y = normalize((ratemonI.rate + ratemonEch.rate + ratemonE.rate) / Hz)
     d_rescaled["osc"] = y
     d_py["osc"] = discrete_dist(y, m)
     d_mis["osc"] = discrete_mutual_information(y_ref, y, m)
@@ -723,7 +730,7 @@ def ching_coupling(num_pop=25000,
     d_spikes["E"] = (np.asarray(spikemonE.t), np.asarray(spikemonE.i))
     d_spikes["Ech"] = (np.asarray(spikemonEch.t), np.asarray(spikemonEch.i))
     d_spikes["I"] = (np.asarray(spikemonI.t), np.asarray(spikemonI.i))
-    d_spikes["osc"] = (np.asarray(spikemonIosc.t), np.asarray(spikemonIosc.i))
+    # d_spikes["osc"] = (np.asarray(spikemonIosc.t), np.asarray(spikemonIosc.i))
     d_spikes["stim_p"] = (np.asarray(spikemonStimulus.t),
                           np.asarray(spikemonStimulus.i))
 
@@ -758,4 +765,4 @@ def ching_coupling(num_pop=25000,
 
 # Create CL
 if __name__ == "__main__":
-    fire.Fire(ing_coupling)
+    fire.Fire(ching_coupling)
