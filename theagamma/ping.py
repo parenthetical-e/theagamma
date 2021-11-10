@@ -18,6 +18,9 @@ from theagamma.util import *
 from brian2 import *
 from brian2.units import *
 from brian2.units import amp
+# Make brian shutup
+prefs.codegen.target = 'numpy'  # use the Python fallback
+BrianLogger.suppress_hierarchy('brian2.codegen' 'method_choice')
 
 
 def ping_coupling(num_pop=25000,
