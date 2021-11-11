@@ -29,6 +29,7 @@ BrianLogger.suppress_name('method_choice')
 def ching_coupling(num_pop=25000,
                    num_stim=500,
                    p_stim=0.2,
+                   stim_rate=2,
                    file_name=None,
                    output=True,
                    stim_mode='drift',
@@ -244,7 +245,6 @@ def ching_coupling(num_pop=25000,
         prob_ext = p_stim  # ExternalStimulus onlys
         priv_std = 0
         min_rate = 0.1
-        stim_rate = 2
         frac_std = 0.01
         stim_std = frac_std * stim_rate
 
@@ -271,7 +271,7 @@ def ching_coupling(num_pop=25000,
 
         #step parems
         f_min = 0
-        f_max = 1.
+        f_max = stim_rate  # default was 1
         MinPlatoTime = 150 * (10**-3)
         MaxPlatoTime = 600 * (10**-3)
         TransitionTime = 50 * (10**-3)
