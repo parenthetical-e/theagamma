@@ -4,17 +4,70 @@ from scipy import integrate
 from scipy import signal
 from scipy.signal import kaiserord, lfilter, firwin
 from scipy.signal import find_peaks
-"""
-This code describes the auxiliar functions used in the following paper:
-
-!!!!!!
 
 
-If you use this code, please cite:
- 
-!!!!!!!!
+def create_times(t, dt):
+    n_steps = int(t * (1.0 / dt))
+    times = np.linspace(0, t, n_steps)
 
-"""
+    return times
+
+
+def select_n(sel, ns, ts):
+    """Select some neurons.
+
+    Params
+    ------
+    sel : list 
+        Which neurons to select
+    ts : array-like (1d)
+        Spike times
+    ns : array-like (1d)
+        Neurons  
+    """
+    if ns.shape != ts.shape:
+        raise ValueError("ns and ts must be the same shape")
+
+    m = np.zeros_like(ts, dtype=np.bool)
+
+    for n in sel:
+        m = np.logical_or(m, n == ns)
+
+    return ns[m], ts[m]
+
+
+def to_spikemat(ns, ts, T, N, dt):
+    """Convert to a grided and binary representation"""
+
+    if not np.allclose(T / dt, int(np.round(T / dt))):
+        raise ValueError("T is not evenly divsible by dt")
+
+    n_steps = int(T * (1.0 / dt))
+    times = np.linspace(0, T, n_steps)
+    spikes = np.zeros((n_steps, N))
+
+    for i, t in enumerate(ts):
+        n = ns[i]
+        idx = (np.abs(times - t)).argmin()  # find closest
+        spikes[idx, n - 1] += 1
+
+    return spikes
+
+
+def bin_times(ts, t_range, dt):
+    """ts into a grid of dt sized bins"""
+
+    if len(t_range) != 2:
+        raise ValueError("t_range must contain two elements")
+    if t_range[0] > t_range[1]:
+        raise ValueError("t_range[0] must be less then t_range[1]")
+
+    n_sample = int((t_range[1] - t_range[0]) * (1.0 / dt))
+
+    bins = np.linspace(t_range[0], t_range[1], n_sample)
+    binned, _ = np.histogram(ts[1:], bins=bins)
+
+    return bins[1:], binned
 
 
 class ProgressBar(object):
@@ -40,9 +93,9 @@ class ProgressBar(object):
             sys.stdout.write("\n")
 
 
-################################################################################
-#External drive time dependence
-################################################################################
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# FROM XJW PAPER
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
 def linear_increasing_vector(vo, vf, duration, time_step):
