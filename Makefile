@@ -27,6 +27,7 @@ test_extract:
 # Explore n 2500 -> 250000
 
 # With gamma osc (using default parameters)
+# ING
 exp1: 
 	-mkdir data/exp1
 	-rm data/exp1/*
@@ -34,9 +35,39 @@ exp1:
 	parallel -j 4 -v \
 			--joblog 'data/exp1.log' \
 			--nice 19 --colsep ',' \
-			'python theagamma/ing.py --file_name=data/exp1/result{1}-{2}.pkl --num_stim={1} --num_pop=25000 --p_stim=0.02 --output=False --stim_seed={2} --net_seed={2}' ::: 2500 ::: {1..20}
+			'python theagamma/ing.py --file_name=data/exp1/result{1}-{2}.pkl --num_pop=25000 --num_stim=2500 --p_stim=0.02 --stim_rate={1} --output=False --stim_seed={2} --net_seed={2}' ::: 1 2 3 4 ::: {1..20} 
 	# Extract 
 	parallel -j 4 -v \
 			--joblog 'data/exp1.log' \
 			--nice 19 --colsep ',' \
-			'python theagamma/extract.py data/exp1 data/exp1/result{1}-*.pkl'::: 2500
+			'python theagamma/extract.py data/exp1/result{1} data/exp1/result{1}-*.pkl' ::: 1 2 3 4
+
+# PING
+exp2: 
+	-mkdir data/exp2
+	-rm data/exp2/*
+	# Run
+	parallel -j 4 -v \
+			--joblog 'data/exp2.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/ping.py --file_name=data/exp2/result{1}-{2}.pkl --num_pop=25000 --num_stim=2500 --p_stim=0.02 --stim_rate={1} --output=False --stim_seed={2} --net_seed={2}' ::: 1 2 3 4 ::: {1..20} 
+	# Extract 
+	parallel -j 4 -v \
+			--joblog 'data/exp2.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/extract.py data/exp2/result{1} data/exp2/result{1}-*.pkl' ::: 1 2 3 4
+
+# PING
+exp3: 
+	-mkdir data/exp3
+	-rm data/exp3/*
+	# Run
+	parallel -j 4 -v \
+			--joblog 'data/exp3.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/ching.py --file_name=data/exp3/result{1}-{2}.pkl --num_pop=25000 --num_stim=2500 --p_stim=0.02 --stim_rate={1} --output=False --stim_seed={2} --net_seed={2}' ::: 1 2 3 4 ::: {1..20} 
+	# Extract 
+	parallel -j 4 -v \
+			--joblog 'data/exp3.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/extract.py data/exp3/result{1} data/exp3/result{1}-*.pkl' ::: 1 2 3 4
