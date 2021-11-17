@@ -82,7 +82,7 @@ exp4:
 	parallel -j 40 -v \
 			--joblog 'data/exp4.log' \
 			--nice 19 --colsep ',' \
-			'python theagamma/sample.py data/exp4/sample{1}_{2} {2} data/exp1/result{1}-*.pkl' ::: 1 2 3 4 ::: 10 20 40 80 160 320 640 1280 2560 5120 10240
+			'python theagamma/sample.py data/exp4/sample{1} {2} data/exp1/result{1}-*.pkl' ::: 1 2 3 4 ::: 10 20 40 80 160 320 640 1280 2560 5120 10240
 
 # Data from exp2
 exp5:
@@ -92,7 +92,7 @@ exp5:
 	parallel -j 40 -v \
 			--joblog 'data/exp5.log' \
 			--nice 19 --colsep ',' \
-			'python theagamma/sample.py data/exp5/sample{1}_{2} {2} data/exp2/result{1}-*.pkl' ::: 1 2 3 4 ::: 10 20 40 80 160 320 640 1280 2560 5120 10240
+			'python theagamma/sample.py data/exp5/sample{1} {2} data/exp2/result{1}-*.pkl' ::: 1 2 3 4 ::: 10 20 40 80 160 320 640 1280 2560 5120 10240
 
 
 # Data from exp3
@@ -103,4 +103,4 @@ exp6:
 	parallel -j 40 -v \
 			--joblog 'data/exp6.log' \
 			--nice 19 --colsep ',' \
-			'python theagamma/sample.py data/exp6/sample{1}_{2} {2} data/exp3/result{1}-*.pkl' ::: 1 2 3 4 ::: 10 20 40 80 160 320 640 1280 2560 5120 10240
+			'python theagamma/sample.py data/exp6/sample{1} {2} data/exp3/result{1}-*.pkl' ::: 1 2 3 4 ::: 10 20 40 80 160 320 640 1280 2560 5120 10240
