@@ -40,8 +40,14 @@ def run(output_name, n, *file_names):
         # Common ref
         y_ref = res["norm_rates"]["stim_ref"]
 
-        # Stim calcss
-        y = res["norm_rates"]["stim_p"]
+        # Stim calcs
+        ts, ns = res["spikes"]["stim_p"]
+        idx = np.random.randint(ns.min(), ns.max(), size=n)
+        ns, ts = select_n(idx, ns, ts)
+        # Convert to rates
+        mat = to_spikemat(ns, ts, simultation_time, ns.max(), dt)
+        # Convert to y, do MI
+        y = normalize(mat.sum(1))
         MI["stim_p"].append(discrete_mutual_information(y_ref, y, m))
         H["stim_p"].append(discrete_entropy(y, m))
 
