@@ -27,6 +27,7 @@ def run(output_name, n, *file_names):
     # params
     dt = 1e-3  # ms resolution
     m = 8
+    simultation_time = 6
 
     H = defaultdict(list)
     MI = defaultdict(list)
@@ -49,7 +50,7 @@ def run(output_name, n, *file_names):
         idx = np.random.random_integers(ns.min(), ns.max(), size=n)
         ns, ts = select_n(idx, ns, ts)
         # Convert to rates
-        mat = to_spikemat(ns, ts, ts.max(), ns.max(), dt)
+        mat = to_spikemat(ns, ts, simultation_time, ns.max(), dt)
         # Convert to y, do MI
         y = normalize(mat.sum(1))
         MI["E"].append(discrete_mutual_information(y_ref, y, m))
