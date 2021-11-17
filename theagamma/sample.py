@@ -47,7 +47,7 @@ def run(output_name, n, *file_names):
 
         # E calcs
         ts, ns = res["spikes"]["E"]
-        idx = np.random.random_integers(ns.min(), ns.max(), size=n)
+        idx = np.random.randit(ns.min(), ns.max(), size=n)
         ns, ts = select_n(idx, ns, ts)
         # Convert to rates
         mat = to_spikemat(ns, ts, simultation_time, ns.max(), dt)
