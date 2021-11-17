@@ -72,9 +72,9 @@ def run(output_name, n, *file_names):
     df_H = pd.DataFrame(H)
     df_H.to_csv(output_name + f"_{n}_H.csv", index=False)
     df_MI = pd.DataFrame(MI)
-    df_MI.to_csv(output_name + f"{n}_MI.csv", index=False)
+    df_MI.to_csv(output_name + f"_{n}_MI.csv", index=False)
     df_dMI = pd.DataFrame(dMI)
-    df_dMI.to_csv(output_name + f"{n}_dMI.csv", index=False)
+    df_dMI.to_csv(output_name + f"_{n}_dMI.csv", index=False)
 
 
 if __name__ == "__main__":
