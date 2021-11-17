@@ -73,6 +73,9 @@ def run(output_name, n, *file_names):
         H["file_name"].append(file_name)
         MI["file_name"].append(file_name)
         dMI["file_name"].append(file_name)
+        H["num_pop"].append(n)
+        MI["num_pop"].append(n)
+        dMI["num_pop"].append(n)
 
     # -- Dump to disk!
     df_H = pd.DataFrame(H)
