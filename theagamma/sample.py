@@ -61,9 +61,9 @@ def run(output_name, n, *file_names):
         dMI["E"].append(MI["E"][-1] - MI["stim_p"][-1])
 
         # Metadata
-        H["trial"].append(i)
-        MI["trial"].append(i)
-        dMI["trial"].append(i)
+        H["file_index"].append(i)
+        MI["file_index"].append(i)
+        dMI["file_index"].append(i)
         H["file_name"].append(file_name)
         MI["file_name"].append(file_name)
         dMI["file_name"].append(file_name)
