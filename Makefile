@@ -127,12 +127,12 @@ exp7:
 	parallel -j 20 -v \
 			--joblog 'data/exp7.log' \
 			--nice 19 --colsep ',' \
-			'python theagamma/ing.py --file_name=data/exp7/result{1}-{2}.pkl --num_pop=25000 --num_stim=2500 --p_stim=0.02 --stim_rate=1 --gi={1} --output=False --stim_seed={2} --net_seed={2}' ::: 4 4.5 5 5.5 6.0 ::: {1..20} 
+			'python theagamma/ing.py --file_name=data/exp7/result{1}-{2}.pkl --num_pop=25000 --num_stim=2500 --p_stim=0.02 --stim_rate=1 --gi={1} --output=False --stim_seed={2} --net_seed={2}' ::: 3 3.5 4 4.5 5 5.5 6.0 6.5 7.0 ::: {1..20} 
 	# Extract 
 	parallel -j 20 -v \
 			--joblog 'data/exp7.log' \
 			--nice 19 --colsep ',' \
-			'python theagamma/extract.py data/exp7/result{1} data/exp7/result{1}-*.pkl' ::: 4 4.5 5 5.5 6.0 
+			'python theagamma/extract.py data/exp7/result{1} data/exp7/result{1}-*.pkl' ::: 3 3.5 4 4.5 5 5.5 6.0 6.5 7.0
 
 # Data from exp1
 exp8:
@@ -142,5 +142,5 @@ exp8:
 	parallel -j 40 -v \
 			--joblog 'data/exp8.log' \
 			--nice 19 --colsep ',' \
-			'python theagamma/sample.py data/exp8/sample{1} {2} data/exp7/result{1}-*.pkl' ::: 4 4.5 5 5.5 6.0 ::: 40 10240
+			'python theagamma/sample.py data/exp8/sample{1} {2} data/exp7/result{1}-*.pkl' ::: 3 3.5 4 4.5 5 5.5 6.0 6.5 7.0 ::: 40 10240
 
