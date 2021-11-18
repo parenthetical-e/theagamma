@@ -120,7 +120,7 @@ exp7:
 	parallel -j 20 -v \
 			--joblog 'data/exp7.log' \
 			--nice 19 --colsep ',' \
-			'python theagamma/ing.py --file_name=data/exp7/result{1}-{2}.pkl --num_pop=25000 --num_stim=2500 --p_stim=0.02 --stim_rate=1 --g={1} --output=False --stim_seed={2} --net_seed={2}' ::: 4 4.5 5 5.5 6.0 ::: {1..20} 
+			'python theagamma/ing.py --file_name=data/exp7/result{1}-{2}.pkl --num_pop=25000 --num_stim=2500 --p_stim=0.02 --stim_rate=1 --gi={1} --output=False --stim_seed={2} --net_seed={2}' ::: 4 4.5 5 5.5 6.0 ::: {1..20} 
 	# Extract 
 	parallel -j 20 -v \
 			--joblog 'data/exp7.log' \
