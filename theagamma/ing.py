@@ -29,6 +29,7 @@ BrianLogger.suppress_name('method_choice')
 def ing_coupling(num_pop=25000,
                  num_stim=500,
                  p_stim=0.2,
+                 g=5.0,
                  stim_rate=2,
                  file_name=None,
                  output=True,
@@ -91,7 +92,7 @@ def ing_coupling(num_pop=25000,
     Ge_extIosc_r = 0.9 * nS  #(External in FS2)
 
     Gioio_r = 5 * nS  #(FS2->FS2)
-    Gioe_r = 5 * nS  #(FS2->RS)
+    Gioe_r = g * nS  #(FS2->RS)
     Gioi_r = 5 * nS  #(FS2->FS)
 
     Gee_r = 1 * nS  #(RS->RS)
