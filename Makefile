@@ -35,7 +35,7 @@ exp1:
 	parallel -j 4 -v \
 			--joblog 'data/exp1.log' \
 			--nice 19 --colsep ',' \
-			'python theagamma/ing.py --file_name=data/exp1/result{1}-{2}.pkl --num_pop=25000 --num_stim=2500 --p_stim=0.02 --stim_rate={1} --output=False --stim_seed={2} --net_seed={2}' ::: c ::: {1..20} 
+			'python theagamma/ing.py --file_name=data/exp1/result{1}-{2}.pkl --num_pop=25000 --num_stim=2500 --p_stim=0.02 --stim_rate={1} --output=False --stim_seed={2} --net_seed={2}' ::: 1 2 3 4 ::: {1..20} 
 	# Extract 
 	parallel -j 4 -v \
 			--joblog 'data/exp1.log' \
@@ -104,3 +104,36 @@ exp6:
 			--joblog 'data/exp6.log' \
 			--nice 19 --colsep ',' \
 			'python theagamma/sample.py data/exp6/sample{1} {2} data/exp3/result{1}-*.pkl' ::: 1 2 3 4 ::: 10 20 40 80 160 320 640 1280 2560 5120 10240
+
+# -----------------------------------------------------------------
+# 11/18/2021
+#
+#
+# Experiments w/ osc coupling conductance.
+#
+# ING
+# A first look at ING. The others will be harder to tune.
+exp7: 
+	-mkdir data/exp7
+	-rm data/exp7/*
+	# Run
+	parallel -j 20 -v \
+			--joblog 'data/exp7.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/ing.py --file_name=data/exp7/result{1}-{2}.pkl --num_pop=25000 --num_stim=2500 --p_stim=0.02 --stim_rate=1 --g={1} --output=False --stim_seed={2} --net_seed={2}' ::: 4 4.5 5 5.5 6.0 ::: {1..20} 
+	# Extract 
+	parallel -j 20 -v \
+			--joblog 'data/exp7.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/extract.py data/exp7/result{1} data/exp7/result{1}-*.pkl' ::: 4 4.5 5 5.5 6.0 
+
+# Data from exp1
+exp8:
+	-mkdir data/exp8
+	-rm data/exp8/*
+	# Sample
+	parallel -j 40 -v \
+			--joblog 'data/exp8.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/sample.py data/exp8/sample{1} {2} data/exp7/result{1}-*.pkl' ::: 4 4.5 5 5.5 6.0 ::: 40 10240
+		
