@@ -26,15 +26,18 @@ BrianLogger.suppress_hierarchy('brian2.codegen')
 BrianLogger.suppress_name('method_choice')
 
 
-def ping_coupling(num_pop=25000,
-                  num_stim=500,
-                  p_stim=0.2,
-                  file_name=None,
-                  stim_rate=2,
-                  output=True,
-                  stim_mode='drift',
-                  stim_seed=None,
-                  net_seed=None):
+def ping_coupling(
+        num_pop=25000,
+        num_stim=500,
+        p_stim=0.2,
+        g_ie=5,  # ie
+        g_ei=1,  # ei
+        file_name=None,
+        stim_rate=2,
+        output=True,
+        stim_mode='drift',
+        stim_seed=None,
+        net_seed=None):
     """The PING network"""
 
     #========================================================================
@@ -83,10 +86,10 @@ def ping_coupling(num_pop=25000,
     Ge_extI_r = 0.8 * nS  #(External in FS1a)
 
     Gee_r = 1 * nS  #(RS->RS)
-    Gei_r = 1 * nS  #(RS->FS1a)
+    Gei_r = g_ei * nS  #(RS->FS1a)
 
     Gii_r = 5 * nS  #(FS1a->FS1a)
-    Gie_r = 5 * nS  #(FS1a->RS)
+    Gie_r = g_ie * nS  #(FS1a->RS)
 
     #-----------------------------
     #This allows to study the effect of the time scales alone
