@@ -142,5 +142,5 @@ exp8:
 	parallel -j 40 -v \
 			--joblog 'data/exp8.log' \
 			--nice 19 --colsep ',' \
-			'python theagamma/sample.py data/exp8/sample{1} {2} data/exp7/result{1}-*.pkl' ::: 3 3.5 4 4.5 5 5.5 6.0 6.5 7.0 ::: 40 10240
+			'python theagamma/sample.py data/exp8/sample{1} {2} data/exp7/result{1}-*.pkl' ::: 3 3.5 4 4.5 5 5.5 6.0 6.5 7.0 ::: 1280 10240
 
