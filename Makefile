@@ -26,6 +26,13 @@ test_extract:
 # Pop size sweep
 # Explore n 2500 -> 250000
 
+# -----------------------------------------------------------------
+# 11/14/2021
+# aaf2b9c
+#
+# First experiments. Explore stim rates, and saample to lower num_pop
+# thus sidestepping stab. issues using smaller populations directly.
+#
 # With gamma osc (using default parameters)
 # ING
 exp1: 
@@ -107,12 +114,12 @@ exp6:
 
 # -----------------------------------------------------------------
 # 11/18/2021
-#
+# ac6dbf3
 #
 # Experiments w/ osc coupling conductance.
 #
 # ING
-# A first look at ING. The others will be harder to tune.
+# A first look at ING. The others will be harder to tune?
 exp7: 
 	-mkdir data/exp7
 	-rm data/exp7/*
@@ -136,4 +143,4 @@ exp8:
 			--joblog 'data/exp8.log' \
 			--nice 19 --colsep ',' \
 			'python theagamma/sample.py data/exp8/sample{1} {2} data/exp7/result{1}-*.pkl' ::: 4 4.5 5 5.5 6.0 ::: 40 10240
-		
+
