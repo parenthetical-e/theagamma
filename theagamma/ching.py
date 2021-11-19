@@ -30,7 +30,7 @@ def ching_coupling(
         num_pop=25000,
         num_stim=500,
         p_stim=0.2,
-        ge=1.0,  # Gece_r (E)
+        g_e=1.0,  # Gece_r (E)
         stim_rate=2,
         file_name=None,
         output=True,
@@ -94,7 +94,7 @@ def ching_coupling(
     Ge_extEch_r = 1. * nS  #(External in FS1a)
 
     Gecec_r = 1. * nS  #(Ech->Ech)
-    Gece_r = ge * nS  #(Ech->RS)
+    Gece_r = g_e * nS  #(Ech->RS)
     Geci_r = 1 * nS  #(Ech->FS)
 
     Gee_r = 1 * nS  #(RS->RS)
