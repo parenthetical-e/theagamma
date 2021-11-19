@@ -1,0 +1,147 @@
+---
+title: "Exp analysis - exp7-8"
+output: html_notebook
+---
+
+```{r helper_fns, echo=FALSE, fig.width=6, fig.height=4, echo=FALSE, warning=FALSE, message=FALSE}
+library(ggplot2)
+library(grid)
+library(gridExtra)
+library(plyr)
+library(readr)
+library(dplyr)
+library(png)
+library(psd)
+library(tidyr)
+library(patchwork)
+```
+
+# Load data
+```{r load, message=FALSE, warning=FALSE, error=FALSE}
+gs <- c('3', '3.5', '4', '4.5', '5', '5.5', '6.0', '6.5', '7.0')
+num_pops <- c('1280', '10240')
+
+path <- "~/Code/theagamma/data/exp7/"
+dmi_exp7 <- NULL
+for(g in gs){
+  file_name <- paste(path, "result", as.character(g), "_dMI.csv", sep="")
+  df <- read.csv(file_name)
+  df$g <- g
+  dmi_exp7 <- bind_rows(df, dmi_exp7)
+}
+
+pow_exp7 <- NULL
+for(g in gs){
+  file_name <- paste(path, "result", as.character(g), "_power.csv", sep="")
+  df <- read.csv(file_name)
+  df$g <- g
+  pow_exp7 <- bind_rows(df, pow_exp7)
+}
+
+# exp8
+path <- "~/Code/theagamma/data/exp8/"
+dmi_exp8 <- NULL
+for(g in gs){
+  for (num_pop in num_pops) {
+    file_name <-
+      paste(
+        path,
+        "sample",
+        as.character(g),
+        "_",
+        as.character(num_pop),
+        "_dMI.csv",
+        sep = ""
+      )
+    df <- read.csv(file_name)
+    df$g <- g
+    dmi_exp8 <- bind_rows(df, dmi_exp8)
+  }
+}
+```
+
+# Exp7 
+```{r, fig.width=4, fig.height=2, echo=FALSE, warning=FALSE, message=FALSE}
+dmi_exp7 %>% 
+  gather(model, mi, stim_p:osc) -> tmp
+
+tmp %>% 
+  filter(model %in% c("E", "I", "osc")) %>%
+  ggplot(aes(x=as.numeric(g), y=mi, group=g)) +
+  # geom_point(size=.4, alpha=0.2) +
+  geom_boxplot() +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  labs(y="Delta MI (bits)", x="g") +
+  theme_classic() +
+  facet_wrap(model~., nrow=1) 
+```
+
+## Power
+```{r, fig.width=2, fig.height=2, echo=FALSE, warning=FALSE, message=FALSE}
+pow_exp7 %>% 
+  ggplot(aes(x=as.numeric(g), y=lfp_gamma, group=g)) +
+  geom_boxplot() +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  labs(y="Power", x="g") +
+  theme_classic() 
+  # facet_wrap(model~., nrow=1) 
+```
+
+## Power v dMI
+```{r, fig.width=4, fig.height=2, echo=FALSE, warning=FALSE, message=FALSE}
+tmp <- right_join(pow_exp7, dmi_exp7)
+tmp %>% 
+  ggplot(aes(x=lfp_gamma, y=E)) +
+  geom_point(size=0.5) +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  labs(y = expression(paste(Delta, "MI (bits)")),
+       x = "g",
+       title = "Model: ING") +
+  theme_classic() +
+  theme(plot.title = element_text(size = 11, face = "bold")) 
+```
+
+# Exp 8 (pop size)
+## dMI 
+```{r, fig.width=8, fig.height=3, echo=FALSE, warning=FALSE, message=FALSE}
+dmi_exp8 %>% 
+  filter(num_pop >= 40) %>% 
+  group_by(num_pop, g) %>% 
+  summarise(M=mean(E), SD=sd(E)) -> tmp
+tmp %>% 
+  ggplot(aes(x=as.numeric(g), y=M)) +
+  geom_ribbon(aes(ymin = M-SD, ymax = M+SD), fill="grey", alpha=0.4) +
+  geom_line(size=0.8, alpha=1) +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  labs(y = expression(paste(Delta, "MI (bits)")),
+       x = "g",
+       title = "Model: ING") +
+  theme_classic() +
+  theme(strip.background = element_blank()) +
+  theme(legend.background = element_rect(colour ="black")) +
+  theme(legend.key.size = unit(.3, "cm")) +
+  theme(panel.spacing = unit(1, "lines")) +
+  theme(strip.text.x = element_text(face = "bold")) +
+  theme(plot.title = element_text(size = 11, face = "bold")) +
+  facet_grid(.~num_pop) 
+```
+```{r, fig.width=8, fig.height=3, echo=FALSE, warning=FALSE, message=FALSE}
+dmi_exp8 %>% 
+  filter(num_pop >= 40) %>% 
+  ggplot(aes(x=as.numeric(g), y=E)) +
+  geom_point() +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  scale_x_log10() +
+  annotation_logticks(sides="b") + 
+  labs(y = expression(paste(Delta, "MI (bits)")),
+       x = "g",
+       title = "Model: ING") +
+  theme_classic() +
+  theme(strip.background = element_blank()) +
+  theme(legend.background = element_rect(colour ="black")) +
+  theme(legend.key.size = unit(.3, "cm")) +
+  theme(panel.spacing = unit(1, "lines")) +
+  theme(strip.text.x = element_text(face = "bold")) +
+  theme(plot.title = element_text(size = 11, face = "bold")) +
+  facet_grid(.~num_pop)
+```
