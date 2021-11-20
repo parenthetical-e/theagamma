@@ -217,4 +217,4 @@ exp14:
 	-parallel -j 40 -v \
 			--joblog 'data/exp14.log' \
 			--nice 19 --colsep ',' \
-			'python theagamma/sample.py data/exp14/sample{1} {2} data/exp13/result{1}-*.pkl' ::: 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 ::: 1280 10240
+			'python theagamma/sample.py data/exp14/sample{1} {2} data/exp13/result{1}-*.pkl' ::: 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 ::: 160 10240
