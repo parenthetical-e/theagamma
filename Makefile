@@ -236,12 +236,12 @@ exp15:
 	-mkdir data/exp15
 	-rm data/exp15/*
 	# Run
-	parallel -j 20 -v \
+	-parallel -j 20 -v \
 			--joblog 'data/exp15.log' \
 			--nice 19 --colsep ',' \
 			'python theagamma/ing.py --file_name=data/exp15/result-g{1}-s{2}-{3}.pkl --num_pop=25000 --num_stim=2500 --p_stim=0.02 --stim_rate={2} --g_i={1} --output=False --stim_seed={3} --net_seed={3}' ::: 3 3.5 4 4.5 5 5.5 6.0 6.5 7.0 ::: 0.5 1 1.5 2.0 2.5 3.0 ::: {1..20} 
 	# Extract 
-	parallel -j 20 -v \
+	-parallel -j 20 -v \
 			--joblog 'data/exp15.log' \
 			--nice 19 --colsep ',' \
 			'python theagamma/extract.py data/exp15/result-g{1}-s{2} data/exp15/result-g{1}-s{2}*.pkl' ::: 3 3.5 4 4.5 5 5.5 6.0 6.5 7.0 ::: 0.5 1 1.5 2.0 2.5 3.0
@@ -251,7 +251,7 @@ exp18:
 	-mkdir data/exp18
 	-rm data/exp18/*
 	# Sample
-	parallel -j 40 -v \
+	-parallel -j 40 -v \
 			--joblog 'data/exp18.log' \
 			--nice 19 --colsep ',' \
 			'python theagamma/sample.py data/exp18/sample-g{1}-s{2} {3} data/exp15/result-g{1}-s{2}*.pkl' ::: 3 3.5 4 4.5 5 5.5 6.0 6.5 7.0 ::: 0.5 1 1.5 2.0 2.5 3.0 ::: 1280 10240
