@@ -680,7 +680,8 @@ def ching_coupling(
     lfp_Ech = calc_lfp(time_Ech, NeuronID_Ech, s_e)
     lfp_I = calc_lfp(time_I, NeuronID_I, s_i)
 
-    LFP = lfp_E + lfp_Ech + lfp_I
+    # LFP = lfp_E + lfp_Ech + lfp_I
+    LFP = lfp_E + lfp_I
 
     #log
     d_lfps = {}
