@@ -88,6 +88,34 @@ for(stim_rate in stim_rates){
 
 # Exp 4
 ## dMI 
+### stim_rate = 1
+```{r, fig.width=8, fig.height=3, echo=FALSE, warning=FALSE, message=FALSE}
+dmi_exp4 %>% 
+  filter(stim_rate == 1) %>% 
+  filter(num_pop >= 40) %>% 
+  group_by(num_pop) %>% 
+  summarise(M=mean(E), SD=sd(E)) %>%
+  ggplot(aes(x=num_pop, y=M)) +
+  geom_ribbon(aes(ymin = M-SD, ymax = M+SD), fill="grey", alpha=0.4) +
+  geom_line(size=0.8, alpha=1) +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  scale_x_log10() +
+  annotation_logticks(sides="b") + 
+  labs(y = expression(paste(Delta, "MI (bits)")),
+       x = "Population size",
+       title = "Model: ING") +
+  theme_classic() +
+  theme(strip.background = element_blank()) +
+  theme(legend.background = element_rect(colour ="black")) +
+  theme(legend.key.size = unit(.3, "cm")) +
+  theme(panel.spacing = unit(1, "lines")) +
+  theme(strip.text.x = element_text(face = "bold")) +
+  theme(plot.title = element_text(size = 11, face = "bold")) -> p1
+print(p1)
+```
+
+### stim_rate 
+#### m/sd
 ```{r, fig.width=8, fig.height=3, echo=FALSE, warning=FALSE, message=FALSE}
 dmi_exp4 %>% 
   filter(num_pop >= 40) %>% 
@@ -109,9 +137,10 @@ dmi_exp4 %>%
   theme(panel.spacing = unit(1, "lines")) +
   theme(strip.text.x = element_text(face = "bold")) +
   theme(plot.title = element_text(size = 11, face = "bold")) +
-  facet_grid(.~stim_rate) -> p1
-print(p1)
+  facet_grid(.~stim_rate) -> p1a
+print(p1a)
 ```
+### jitter
 ```{r, fig.width=8, fig.height=3, echo=FALSE, warning=FALSE, message=FALSE}
 dmi_exp4 %>% 
   filter(num_pop >= 40) %>% 
@@ -135,6 +164,34 @@ dmi_exp4 %>%
 
 # Exp 5
 ## dMI 
+### stim_rate = 1
+```{r, fig.width=8, fig.height=3, echo=FALSE, warning=FALSE, message=FALSE}
+dmi_exp5 %>% 
+  filter(num_pop >= 40) %>% 
+  filter(stim_rate == 1) %>% 
+  group_by(num_pop, stim_rate) %>% 
+  summarise(M=mean(E), SD=sd(E)) %>%
+  ggplot(aes(x=num_pop, y=M)) +
+  geom_ribbon(aes(ymin = M-SD, ymax = M+SD), fill="grey", alpha=0.4) +
+  geom_line(size=0.8, alpha=1) +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  scale_x_log10() +
+  annotation_logticks(sides="b") + 
+  labs(y = expression(paste(Delta, "MI (bits)")),
+       x = "Population size",
+       title = "Model: PING") +
+  theme_classic() +
+  theme(strip.background = element_blank()) +
+  theme(legend.background = element_rect(colour ="black")) +
+  theme(legend.key.size = unit(.3, "cm")) +
+  theme(panel.spacing = unit(1, "lines")) +
+  theme(strip.text.x = element_text(face = "bold")) +
+  theme(plot.title = element_text(size = 11, face = "bold")) -> p2
+print(p2)
+```
+
+### stim_rate
+#### m/sd
 ```{r, fig.width=8, fig.height=3, echo=FALSE, warning=FALSE, message=FALSE}
 dmi_exp5 %>% 
   filter(num_pop >= 40) %>% 
@@ -156,10 +213,10 @@ dmi_exp5 %>%
   theme(panel.spacing = unit(1, "lines")) +
   theme(strip.text.x = element_text(face = "bold")) +
   theme(plot.title = element_text(size = 11, face = "bold")) +
-  facet_grid(.~stim_rate) -> p2
-print(p2)
+  facet_grid(.~stim_rate) -> p2a
+print(p2a)
 ```
-
+#### Jitter
 ```{r, fig.width=8, fig.height=3, echo=FALSE, warning=FALSE, message=FALSE}
 dmi_exp5 %>% 
   filter(num_pop >= 40) %>% 
@@ -183,6 +240,35 @@ dmi_exp5 %>%
 
 # Exp 6
 ## dMI 
+### stim_rate = 1
+
+### stim_rate 
+```{r, fig.width=8, fig.height=3, echo=FALSE, warning=FALSE, message=FALSE}
+dmi_exp6 %>% 
+  filter(num_pop >= 40) %>% 
+  filter(stim_rate == 1) %>% 
+  group_by(num_pop, stim_rate) %>% 
+  summarise(M=mean(E), SD=sd(E)) %>%
+  ggplot(aes(x=num_pop, y=M)) +
+  geom_ribbon(aes(ymin = M-SD, ymax = M+SD), fill="grey", alpha=0.4) +
+  geom_line(size=0.8, alpha=1) +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  scale_x_log10() +
+  annotation_logticks(sides="b") + 
+  labs(y = expression(paste(Delta, "MI (bits)")),
+       x = "Population size",
+       title = "Model: CHING") +
+  theme_classic() +
+  theme(strip.background = element_blank()) +
+  theme(legend.background = element_rect(colour ="black")) +
+  theme(legend.key.size = unit(.3, "cm")) +
+  theme(panel.spacing = unit(1, "lines")) +
+  theme(strip.text.x = element_text(face = "bold")) +
+  theme(plot.title = element_text(size = 11, face = "bold")) -> p3
+print(p3)
+```
+
+#### m/sd
 ```{r, fig.width=8, fig.height=3, echo=FALSE, warning=FALSE, message=FALSE}
 dmi_exp6 %>% 
   filter(num_pop >= 40) %>% 
@@ -204,11 +290,11 @@ dmi_exp6 %>%
   theme(panel.spacing = unit(1, "lines")) +
   theme(strip.text.x = element_text(face = "bold")) +
   theme(plot.title = element_text(size = 11, face = "bold")) +
-  facet_grid(.~stim_rate) -> p3
+  facet_grid(.~stim_rate) -> p3a
 
-print(p3)
+print(p3a)
 ```
-
+#### jitter
 ```{r, fig.width=8, fig.height=3, echo=FALSE, warning=FALSE, message=FALSE}
 dmi_exp6 %>% 
   filter(num_pop >= 40) %>% 
@@ -230,8 +316,8 @@ dmi_exp6 %>%
   facet_grid(.~stim_rate)
 ```
 # Join
-```{r, fig.width=8, fig.height=10, echo=FALSE, warning=FALSE, message=FALSE}
-p1 / p2 / p3 +
+```{r, fig.width=8, fig.height=2, echo=FALSE, warning=FALSE, message=FALSE}
+p1 + p2 + p3 +
   plot_annotation(
     tag_levels = 'a',
     tag_suffix = ".",
