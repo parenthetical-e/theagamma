@@ -222,16 +222,13 @@ exp14:
 
 
 # -----------------------------------------------------------------
-# 11/18/2021
+# 11/20/2021
 # ac6dbf3
 #
 # Experiments w/ osc coupling conductance and a six fold change in stim_rate
 # ranging from 0.5-3.0
 #
-# ING
-# A first look at ING. The others will be harder to tune?
-
-# HERE - check names, and param index, and rename experiments.
+# ING - consider g_i
 exp15: 
 	-mkdir data/exp15
 	-rm data/exp15/*
@@ -246,7 +243,6 @@ exp15:
 			--nice 19 --colsep ',' \
 			'python theagamma/extract.py data/exp15/result-g{1}-s{2} data/exp15/result-g{1}-s{2}*.pkl' ::: 3 3.5 4 4.5 5 5.5 6.0 6.5 7.0 ::: 0.5 1 1.5 2.0 2.5 3.0
 
-# Data from exp1
 exp18:
 	-mkdir data/exp18
 	-rm data/exp18/*
@@ -257,7 +253,7 @@ exp18:
 			'python theagamma/sample.py data/exp18/sample-g{1}-s{2} {3} data/exp15/result-g{1}-s{2}*.pkl' ::: 3 3.5 4 4.5 5 5.5 6.0 6.5 7.0 ::: 0.5 1 1.5 2.0 2.5 3.0 ::: 1280 10240
 
 # ----------------------------------------------------------------------
-# PING - consider g ie, ei
+# PING - consider ie, ei
 # -- ei
 exp19: 
 	-mkdir data/exp19
@@ -332,3 +328,68 @@ exp24:
 			--joblog 'data/exp24.log' \
 			--nice 19 --colsep ',' \
 			'python theagamma/sample.py data/exp24/sample-g{1}-s{2} {3} data/exp23/result-g{1}-s{2}*.pkl' ::: 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 ::: 0.5 1 1.5 2.0 2.5 3.0 ::: 160 10240
+
+
+# -----------------------------------------------------------------
+# 11/21/2021
+# 9816a46
+#
+# Rerun exp15-18 and exp23-24 because I changed the way LFP was estimated.
+# All models now only use E + I for the LFP spikes. This makes it consistent
+# between all models. It also let's me see gamma power/MI effects in ching.
+# The Ech was such a strong oscillator if it is included in the LFP is masks
+# the downstream entrainment effects I am want to see.
+# 
+# NOTE: because PING models were already est. this way there is no need to
+#       rerun them. Join exp19-22 with these recipes to get a full set of
+#       data.
+
+# ING - consider g_i
+exp25: 
+	-mkdir data/exp25
+	-rm data/exp25/*
+	# Run
+	-parallel -j 20 -v \
+			--joblog 'data/exp25.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/ing.py --file_name=data/exp25/result-g{1}-s{2}-{3}.pkl --num_pop=25000 --num_stim=2500 --p_stim=0.02 --stim_rate={2} --g_i={1} --output=False --stim_seed={3} --net_seed={3}' ::: 3 3.5 4 4.5 5 5.5 6.0 6.5 7.0 ::: 0.5 1 1.5 2.0 2.5 3.0 ::: {1..20} 
+	# Extract 
+	-parallel -j 20 -v \
+			--joblog 'data/exp25.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/extract.py data/exp25/result-g{1}-s{2} data/exp25/result-g{1}-s{2}*.pkl' ::: 3 3.5 4 4.5 5 5.5 6.0 6.5 7.0 ::: 0.5 1 1.5 2.0 2.5 3.0
+
+# Data from exp1
+exp26:
+	-mkdir data/exp26
+	-rm data/exp26/*
+	# Sample
+	-parallel -j 40 -v \
+			--joblog 'data/exp26.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/sample.py data/exp26/sample-g{1}-s{2} {3} data/exp25/result-g{1}-s{2}*.pkl' ::: 3 3.5 4 4.5 5 5.5 6.0 6.5 7.0 ::: 0.5 1 1.5 2.0 2.5 3.0 ::: 1280 10240
+
+# CHING - consider g_e
+exp27: 
+	-mkdir data/exp27
+	-rm data/exp27/*
+	# Run
+	-parallel -j 20 -v \
+			--joblog 'data/exp27.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/ching.py --file_name=data/exp27/result-g{1}-s{2}-{3}.pkl --num_pop=25000 --num_stim=2500 --p_stim=0.02 --stim_rate={2} --g_e={1} --output=False --stim_seed={3} --net_seed={3}' ::: 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 ::: 0.5 1 1.5 2.0 2.5 3.0 ::: {1..20} 
+	# Extract 
+	-parallel -j 20 -v \
+			--joblog 'data/exp27.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/extract.py data/exp27/result-g{1}-s{2} data/exp27/result-g{1}-s{2}*.pkl' ::: 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 ::: 0.5 1 1.5 2.0 2.5 3.0
+		
+exp28:
+	-mkdir data/exp28
+	-rm data/exp28/*
+	# Sample
+	-parallel -j 40 -v \
+			--joblog 'data/exp28.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/sample.py data/exp28/sample-g{1}-s{2} {3} data/exp27/result-g{1}-s{2}*.pkl' ::: 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 ::: 0.5 1 1.5 2.0 2.5 3.0 ::: 160 10240
+
