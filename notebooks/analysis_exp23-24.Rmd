@@ -1,0 +1,385 @@
+---
+title: "Exp analysis - exp23-24 - CHING - g_ie/stim_rate"
+output: html_notebook
+---
+
+```{r helper_fns, echo=FALSE, fig.width=6, fig.height=4, echo=FALSE, warning=FALSE, message=FALSE}
+library(ggplot2)
+library(grid)
+library(gridExtra)
+library(plyr)
+library(readr)
+library(dplyr)
+library(png)
+library(psd)
+library(tidyr)
+library(patchwork)
+```
+
+# Load data
+```{r load, message=FALSE, warning=FALSE, error=FALSE}
+gs <- c('0.6', '0.7', '0.8', '0.9', '1.0', '1.1', '1.2', '1.3', '1.4')
+stim_rates <- c('0.5', '1', '1.5', '2.0', '2.5', '3.0')
+num_pops <- c('160', '10240')
+
+path <- "~/Code/theagamma/data/exp23/"
+dmi_exp23 <- NULL
+for(g in gs){
+  for(stim_rate in stim_rates){
+    file_name <-
+      paste(path, "result-g", g, "-s", stim_rate, "_dMI.csv", sep = "")
+    df <- read.csv(file_name)
+    df$g <- as.numeric(g)
+    df$stim_rate <- as.numeric(stim_rate)
+    dmi_exp23 <- bind_rows(df, dmi_exp23)
+  }
+}
+
+pow_exp23 <- NULL
+for(g in gs){
+  for(stim_rate in stim_rates){
+    file_name <-
+      paste(path, "result-g", g, "-s", stim_rate, "_power.csv", sep = "")
+    df <- read.csv(file_name)
+    df$g <- as.numeric(g)
+    df$stim_rate <- as.numeric(stim_rate)
+    pow_exp23 <- bind_rows(df, pow_exp23)
+  }
+}
+
+# exp24
+path <- "~/Code/theagamma/data/exp24/"
+dmi_exp24 <- NULL
+for(g in gs){
+  for(stim_rate in stim_rates){
+    for (num_pop in num_pops) {
+      file_name <-
+        paste(path,
+              "sample-g",
+              g,
+              "-s",
+              stim_rate,
+              "_",
+              num_pop,
+              "_dMI.csv",
+              sep = "")
+      df <- read.csv(file_name)
+      df$g <- as.numeric(g)
+      df$stim_rate <- as.numeric(stim_rate)
+      dmi_exp24 <- bind_rows(df, dmi_exp24)
+    }
+  }
+}
+```
+
+# exp23 
+## g
+```{r, fig.width=4, fig.height=2, echo=FALSE, warning=FALSE, message=FALSE}
+dmi_exp23 %>% 
+  gather(model, mi, stim_p:osc) -> tmp
+
+tmp %>% 
+  filter(model %in% c("E", "I", "osc")) %>%
+  ggplot(aes(x=g, y=mi, group=g)) +
+  geom_boxplot() +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  labs(y="Delta MI (bits)", x="g") +
+  theme_classic() +
+  facet_wrap(model~., nrow=1) 
+```
+
+## stim
+```{r, fig.width=4, fig.height=2, echo=FALSE, warning=FALSE, message=FALSE}
+dmi_exp23 %>% 
+  gather(model, mi, stim_p:osc) -> tmp
+
+tmp %>% 
+  filter(model %in% c("E", "I", "osc")) %>%
+  ggplot(aes(x=stim_rate, y=mi, group=stim_rate)) +
+  geom_boxplot() +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  labs(y="Delta MI (bits)", x="Stimulus rate") +
+  theme_classic() +
+  facet_wrap(model~., nrow=1) 
+```
+
+## Stim (color g)
+### Boxplot
+```{r, fig.width=6, fig.height=8, echo=FALSE, warning=FALSE, message=FALSE}
+dmi_exp23 %>% 
+  gather(model, mi, stim_p:osc) -> tmp
+
+tmp %>% 
+  filter(model %in% c("E", "I", "osc")) %>%
+  ggplot(aes(
+    x = stim_rate,
+    y = mi,
+    fill = as.factor(g),
+    group = interaction(g, stim_rate)
+  )) +
+  geom_boxplot() +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  labs(y = expression(paste(Delta, "MI (bits)")), x="Stimulus rate") +
+  theme_classic() +
+  theme(strip.background = element_blank()) +
+  theme(legend.background = element_rect(colour ="black")) +
+  theme(legend.key.size = unit(.3, "cm")) +
+  theme(panel.spacing = unit(1, "lines")) +
+  theme(strip.text.x = element_text(face = "bold")) +
+  theme(plot.title = element_text(size = 11, face = "bold")) +
+  scale_color_manual("g", values = c(
+    "lightsteelblue3",
+    "lightskyblue3",
+    "steelblue3",
+    "steelblue4",
+    "slateblue2", 
+    "slateblue3",
+    "slateblue4",
+    "mediumpurple4",
+    "darkorchid4"
+    )) +
+  scale_fill_manual("g", values = c(
+    "lightsteelblue3",
+    "lightskyblue3",
+    "steelblue3",
+    "steelblue4",
+    "slateblue2", 
+    "slateblue3",
+    "slateblue4",
+    "mediumpurple4",
+    "darkorchid4"
+    )) +
+  facet_wrap(model~., ncol=1) 
+```
+
+### Ribbon (E only)
+```{r, fig.width=4, fig.height=4, echo=FALSE, warning=FALSE, message=FALSE}
+dmi_exp23 %>% 
+  group_by(stim_rate, g) %>% 
+  summarise(M=mean(E), SD=sd(E)) -> tmp
+
+tmp %>% 
+  ggplot(
+    aes(
+      x = stim_rate,
+      y = M,
+      fill = as.factor(g),
+      color=as.factor(g),
+      group = interaction(g))) +
+  geom_line(size=2, alpha=1) +
+  geom_ribbon(aes(ymin=M-SD, ymax=M+SD), alpha=0.1, color=NA) +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  labs(y = expression(paste(Delta, "MI (bits)")),
+       x = "Stimulus rate",
+       title = "PING (E population)") +
+  theme_classic() +
+  theme(strip.background = element_blank()) +
+  theme(legend.background = element_rect(colour ="black")) +
+  theme(legend.key.size = unit(.3, "cm")) +
+  theme(panel.spacing = unit(1, "lines")) +
+  theme(strip.text.x = element_text(face = "bold")) +
+  theme(plot.title = element_text(size = 11, face = "bold")) +
+  scale_color_manual("g", values = c(
+    "lightsteelblue3",
+    "lightskyblue3",
+    "steelblue3",
+    "steelblue4",
+    "slateblue2", 
+    "slateblue3",
+    "slateblue4",
+    "mediumpurple4",
+    "darkorchid4"
+    )) +
+  scale_fill_manual("g", values = c(
+    "lightsteelblue3",
+    "lightskyblue3",
+    "steelblue3",
+    "steelblue4",
+    "slateblue2", 
+    "slateblue3",
+    "slateblue4",
+    "mediumpurple4",
+    "darkorchid4"
+    )) 
+```
+
+### Ribbon (I only)
+```{r, fig.width=4, fig.height=4, echo=FALSE, warning=FALSE, message=FALSE}
+dmi_exp23 %>% 
+  group_by(stim_rate, g) %>% 
+  summarise(M=mean(I), SD=sd(I)) -> tmp
+
+tmp %>% 
+  ggplot(
+    aes(
+      x = stim_rate,
+      y = M,
+      fill = as.factor(g),
+      color=as.factor(g),
+      group = interaction(g))) +
+  geom_line(size=2, alpha=1) +
+  geom_ribbon(aes(ymin=M-SD, ymax=M+SD), alpha=0.1, color=NA) +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  labs(y = expression(paste(Delta, "MI (bits)")),
+       x = "Stimulus rate",
+       title = "PING (I population)") +
+  theme_classic() +
+  theme(strip.background = element_blank()) +
+  theme(legend.background = element_rect(colour ="black")) +
+  theme(legend.key.size = unit(.3, "cm")) +
+  theme(panel.spacing = unit(1, "lines")) +
+  theme(strip.text.x = element_text(face = "bold")) +
+  theme(plot.title = element_text(size = 11, face = "bold")) +
+  scale_color_manual("g", values = c(
+    "lightsteelblue3",
+    "lightskyblue3",
+    "steelblue3",
+    "steelblue4",
+    "slateblue2", 
+    "slateblue3",
+    "slateblue4",
+    "mediumpurple4",
+    "darkorchid4"
+    )) +
+  scale_fill_manual("g", values = c(
+    "lightsteelblue3",
+    "lightskyblue3",
+    "steelblue3",
+    "steelblue4",
+    "slateblue2", 
+    "slateblue3",
+    "slateblue4",
+    "mediumpurple4",
+    "darkorchid4"
+    )) 
+```
+
+## Power
+```{r, fig.width=2, fig.height=2, echo=FALSE, warning=FALSE, message=FALSE}
+pow_exp23 %>% 
+  ggplot(aes(x=as.numeric(g), y=lfp_gamma, group=g)) +
+  geom_boxplot() +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  labs(y="Power", x="g") +
+  theme_classic() 
+  # facet_wrap(model~., nrow=1) 
+```
+
+## Power v dMI
+```{r, fig.width=4, fig.height=2, echo=FALSE, warning=FALSE, message=FALSE}
+tmp <- right_join(pow_exp23, dmi_exp23)
+tmp %>% 
+  ggplot(aes(x=lfp_gamma, y=E)) +
+  geom_point(size=0.5) +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  labs(y = expression(paste(Delta, "MI (bits)")),
+       x = "Gamma power",
+       title = "Model: CHING") +
+  theme_classic() +
+  theme(plot.title = element_text(size = 11, face = "bold")) 
+```
+```{r, fig.width=4, fig.height=8, echo=FALSE, warning=FALSE, message=FALSE}
+tmp <- right_join(pow_exp23, dmi_exp23)
+tmp %>% 
+  ggplot(aes(x=lfp_gamma, y=E)) +
+  geom_point(size=0.5) +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  labs(y = expression(paste(Delta, "MI (bits)")),
+       x = "Gamma power",
+       title = "Model: PING") +
+  theme_classic() +
+  theme(plot.title = element_text(size = 11, face = "bold")) +
+  theme(strip.background = element_blank()) +
+  theme(legend.background = element_rect(colour ="black")) +
+  theme(legend.key.size = unit(.3, "cm")) +
+  theme(panel.spacing = unit(1, "lines")) +
+  theme(strip.text.x = element_text(face = "bold")) +
+  theme(plot.title = element_text(size = 11, face = "bold")) +
+  facet_wrap(stim_rate~., ncol=1)
+```
+
+# Exp 18 (pop size)
+## dMI 
+```{r, fig.width=6, fig.height=12, echo=FALSE, warning=FALSE, message=FALSE}
+dmi_exp24 %>% 
+  filter(num_pop >= 40) %>% 
+  ggplot(aes(x=stim_rate, y=E, color=as.factor(g))) +
+  geom_point() +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  labs(y = expression(paste(Delta, "MI (bits)")),
+       x = "Stimulus rate",
+       title = "Model: PING") +
+  theme_classic() +
+  theme(strip.background = element_blank()) +
+  theme(legend.background = element_rect(colour ="black")) +
+  theme(legend.key.size = unit(.3, "cm")) +
+  theme(panel.spacing = unit(1, "lines")) +
+  theme(strip.text.x = element_text(face = "bold")) +
+  theme(plot.title = element_text(size = 11, face = "bold")) +
+  scale_color_manual("g", values = c(
+    "lightsteelblue3",
+    "lightskyblue3",
+    "steelblue3",
+    "steelblue4",
+    "slateblue2", 
+    "slateblue3",
+    "slateblue4",
+    "mediumpurple4",
+    "darkorchid4"
+    )) +
+  facet_grid(g~num_pop)
+```
+
+### Ribbon
+```{r, fig.width=6, fig.height=4, echo=FALSE, warning=FALSE, message=FALSE}
+dmi_exp24 %>% 
+  filter(num_pop >= 40) %>% 
+  group_by(num_pop, stim_rate, g) %>% 
+  summarise(M=mean(E), SD=sd(E)) -> tmp
+
+tmp %>% 
+  ggplot(
+    aes(
+      x = stim_rate,
+      y = M,
+      fill = as.factor(g),
+      color=as.factor(g),
+      group = interaction(g))) +
+  geom_line(size=2, alpha=1) +
+  geom_ribbon(aes(ymin=M-SD, ymax=M+SD), alpha=0.1, color=NA) +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  labs(y = expression(paste(Delta, "MI (bits)")),
+       x = "Stimulus rate",
+       title = "PING (E population)") +
+  theme_classic() +
+  theme(strip.background = element_blank()) +
+  theme(legend.background = element_rect(colour ="black")) +
+  theme(legend.key.size = unit(.3, "cm")) +
+  theme(panel.spacing = unit(1, "lines")) +
+  theme(strip.text.x = element_text(face = "bold")) +
+  theme(plot.title = element_text(size = 11, face = "bold")) +
+  scale_color_manual("g", values = c(
+    "lightsteelblue3",
+    "lightskyblue3",
+    "steelblue3",
+    "steelblue4",
+    "slateblue2", 
+    "slateblue3",
+    "slateblue4",
+    "mediumpurple4",
+    "mediumpurple2"
+    )) +
+  scale_fill_manual("g", values = c(
+    "lightsteelblue3",
+    "lightskyblue3",
+    "steelblue3",
+    "steelblue4",
+    "slateblue2", 
+    "slateblue3",
+    "slateblue4",
+    "mediumpurple4",
+    "mediumpurple2"
+    )) +
+  facet_grid(.~num_pop) 
+```
+

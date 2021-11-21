@@ -96,7 +96,7 @@ tmp %>%
   geom_hline(yintercept=0, color="grey") + xlab("") +
   labs(y = expression(paste(Delta, "MI (bits)")),
        x = "g",
-       title = "Model: ING") +
+       title = "Model: PING") +
   theme_classic() +
   theme(plot.title = element_text(size = 11, face = "bold")) 
 ```
@@ -115,7 +115,7 @@ tmp %>%
   geom_hline(yintercept=0, color="grey") + xlab("") +
   labs(y = expression(paste(Delta, "MI (bits)")),
        x = "g",
-       title = "Model: ING") +
+       title = "Model: PING") +
   theme_classic() +
   theme(strip.background = element_blank()) +
   theme(legend.background = element_rect(colour ="black")) +
@@ -135,7 +135,7 @@ dmi_exp10 %>%
   annotation_logticks(sides="b") + 
   labs(y = expression(paste(Delta, "MI (bits)")),
        x = "g",
-       title = "Model: ING") +
+       title = "Model: PING") +
   theme_classic() +
   theme(strip.background = element_blank()) +
   theme(legend.background = element_rect(colour ="black")) +

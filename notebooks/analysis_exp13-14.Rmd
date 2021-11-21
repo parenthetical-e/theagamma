@@ -19,7 +19,7 @@ library(patchwork)
 # Load data
 ```{r load, message=FALSE, warning=FALSE, error=FALSE}
 gs <- c('0.5', '0.6', '0.7', '0.8', '0.9', '1.0', '1.1', '1.2', '1.3', '1.4', '1.5')
-num_pops <- c('1280', '10240')
+num_pops <- c('160', '10240')
 
 path <- "~/Code/theagamma/data/exp13/"
 dmi_exp13 <- NULL
@@ -96,7 +96,7 @@ tmp %>%
   geom_hline(yintercept=0, color="grey") + xlab("") +
   labs(y = expression(paste(Delta, "MI (bits)")),
        x = "g",
-       title = "Model: ING") +
+       title = "Model: CHING") +
   theme_classic() +
   theme(plot.title = element_text(size = 11, face = "bold")) 
 ```
@@ -115,7 +115,7 @@ tmp %>%
   geom_hline(yintercept=0, color="grey") + xlab("") +
   labs(y = expression(paste(Delta, "MI (bits)")),
        x = "g",
-       title = "Model: ING") +
+       title = "Model: CHING") +
   theme_classic() +
   theme(strip.background = element_blank()) +
   theme(legend.background = element_rect(colour ="black")) +
@@ -135,7 +135,7 @@ dmi_exp14 %>%
   annotation_logticks(sides="b") + 
   labs(y = expression(paste(Delta, "MI (bits)")),
        x = "g",
-       title = "Model: ING") +
+       title = "Model: CHING") +
   theme_classic() +
   theme(strip.background = element_blank()) +
   theme(legend.background = element_rect(colour ="black")) +
