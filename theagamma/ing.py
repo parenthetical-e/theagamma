@@ -672,7 +672,8 @@ def ing_coupling(num_pop=25000,
     lfp_I = calc_lfp(time_I, NeuronID_I, s_i)
     lfp_Iosc = calc_lfp(time_Iosc, NeuronID_Iosc, s_i)
 
-    LFP = lfp_E + lfp_I + lfp_Iosc
+    # LFP = lfp_E + lfp_I + lfp_Iosc
+    LFP = lfp_E + lfp_I
 
     #log
     d_lfps = {}
