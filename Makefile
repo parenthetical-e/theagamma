@@ -291,11 +291,13 @@ exp21:
 			--joblog 'data/exp21.log' \
 			--nice 19 --colsep ',' \
 			'python theagamma/ping.py --file_name=data/exp21/result-g{1}-s{2}-{3}.pkl --num_pop=25000 --num_stim=2500 --p_stim=0.02 --stim_rate={2} --g_ie={1} --g_ei=1.0 --output=False --stim_seed={3} --net_seed={3}' ::: 3 3.5 4 4.5 5 5.5 6.0 6.5 7.0 ::: 0.5 1 1.5 2.0 2.5 3.0 ::: {1..20} 
+
+exp21x: 
 	# Extract 
 	-parallel -j 20 -v \
 			--joblog 'data/exp21.log' \
 			--nice 19 --colsep ',' \
-			'python theagamma/extract.py data/exp21/result-g{1}-s{2} data/exp21/result-g{1}-s{2}*.pkl' ::: 0.5 1 1.5 2.0 2.5 3.0 ::: 3 3.5 4 4.5 5 5.5 6.0 6.5 7.0
+			'python theagamma/extract.py data/exp21/result-g{1}-s{2} data/exp21/result-g{1}-s{2}*.pkl' ::: 3 3.5 4 4.5 5 5.5 6.0 6.5 7.0 ::: 0.5 1 1.5 2.0 2.5 3.0
 
 exp22:
 	-mkdir data/exp22
