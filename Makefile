@@ -304,7 +304,7 @@ exp22:
 	-parallel -j 40 -v \
 			--joblog 'data/exp22.log' \
 			--nice 19 --colsep ',' \
-			'python theagamma/sample.py data/exp22/sample-g{1}-s{2} {3} data/exp21/result-g{1}-s{2}*.pkl' ::: 0.5 1 1.5 2.0 2.5 3.0 ::: 3 3.5 4 4.5 5 5.5 6.0 6.5 7.0 ::: 1280 10240
+			'python theagamma/sample.py data/exp22/sample-g{1}-s{2} {3} data/exp21/result-g{1}-s{2}*.pkl' ::: 3 3.5 4 4.5 5 5.5 6.0 6.5 7.0 ::: 1280 10240 ::: 0.5 1 1.5 2.0 2.5 3.0
 
 # ----------------------------------------------------------------------
 # CHING - consider g_e
