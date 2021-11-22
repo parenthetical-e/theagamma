@@ -393,3 +393,107 @@ exp28:
 			--nice 19 --colsep ',' \
 			'python theagamma/sample.py data/exp28/sample-g{1}-s{2} {3} data/exp27/result-g{1}-s{2}*.pkl' ::: 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 ::: 0.5 1 1.5 2.0 2.5 3.0 ::: 160 10240
 
+
+# -------------------------------------------------------------------------
+# 11/22/2021
+#
+# Rerun experiments with higher n, to try and get the SD error bars down
+# some in the paper.
+
+# ING 
+exp29: 
+	-mkdir data/exp29
+	-rm data/exp29/*
+	# Run
+	-parallel -j 30 -v \
+			--joblog 'data/exp29.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/ing.py --file_name=data/exp29/result-g{1}-s{2}-{3}.pkl --num_pop=25000 --num_stim=2500 --p_stim=0.02 --stim_rate={2} --g_i={1} --output=False --stim_seed={3} --net_seed={3}' ::: 3 3.5 4 4.5 5 5.5 6.0 6.5 7.0 ::: 0.5 1 1.5 2.0 2.5 3.0 ::: {1..100} 
+	# Extract 
+	-parallel -j 30 -v \
+			--joblog 'data/exp29.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/extract.py data/exp29/result-g{1}-s{2} data/exp29/result-g{1}-s{2}*.pkl' ::: 3 3.5 4 4.5 5 5.5 6.0 6.5 7.0 ::: 0.5 1 1.5 2.0 2.5 3.0
+
+exp30:
+	-mkdir data/exp30
+	-rm data/exp30/*
+	# Sample
+	-parallel -j 40 -v \
+			--joblog 'data/exp30.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/sample.py data/exp30/sample-g{1}-s{2} {3} data/exp29/result-g{1}-s{2}*.pkl' ::: 3 3.5 4 4.5 5 5.5 6.0 6.5 7.0 ::: 0.5 1 1.5 2.0 2.5 3.0 ::: 1280 10240
+
+# PING 
+# ei
+exp31: 
+	-mkdir data/exp31
+	-rm data/exp31/*
+	# Run
+	-parallel -j 30 -v \
+			--joblog 'data/exp31.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/ping.py --file_name=data/exp31/result-g{1}-s{2}-{3}.pkl --num_pop=25000 --num_stim=2500 --p_stim=0.02 --stim_rate={2} --g_ie=5 --g_ei={1} --output=False --stim_seed={3} --net_seed={3}' ::: 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4  ::: 0.5 1 1.5 2.0 2.5 3.0 ::: {1..100} 
+	# Extract 
+	-parallel -j 30 -v \
+			--joblog 'data/exp31.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/extract.py data/exp31/result-g{1}-s{2} data/exp31/result-g{1}-s{2}*.pkl' ::: 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4  ::: 0.5 1 1.5 2.0 2.5 3.0
+
+exp32:
+	-mkdir data/exp32
+	-rm data/exp32/*
+	# Sample
+	-parallel -j 40 -v \
+			--joblog 'data/exp32.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/sample.py data/exp32/sample-g{1}-s{2} {3} data/exp31/result-g{1}-s{2}*.pkl' ::: 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4  ::: 0.5 1 1.5 2.0 2.5 3.0 ::: 1280 10240
+
+# ie
+exp33: 
+	-mkdir data/exp33
+	-rm data/exp33/*
+	# Run
+	-parallel -j 30 -v \
+			--joblog 'data/exp33.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/ping.py --file_name=data/exp33/result-g{1}-s{2}-{3}.pkl --num_pop=25000 --num_stim=2500 --p_stim=0.02 --stim_rate={2} --g_ie={1} --g_ei=1.0 --output=False --stim_seed={3} --net_seed={3}' ::: 3 3.5 4 4.5 5 5.5 6.0 6.5 7.0 ::: 0.5 1 1.5 2.0 2.5 3.0 ::: {1..100} 
+	# Extract 
+	-parallel -j 30 -v \
+			--joblog 'data/exp33.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/extract.py data/exp33/result-g{1}-s{2} data/exp33/result-g{1}-s{2}*.pkl' ::: 3 3.5 4 4.5 5 5.5 6.0 6.5 7.0 ::: 0.5 1 1.5 2.0 2.5 3.0
+
+exp34:
+	-mkdir data/exp34
+	-rm data/exp34/*
+	# Sample
+	-parallel -j 40 -v \
+			--joblog 'data/exp34.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/sample.py data/exp34/sample-g{1}-s{2} {3} data/exp33/result-g{1}-s{2}*.pkl' ::: 3 3.5 4 4.5 5 5.5 6.0 6.5 7.0 ::: 0.5 1 1.5 2.0 2.5 3.0 ::: 1280 10240 
+
+# CHING
+exp35: 
+	-mkdir data/exp35
+	-rm data/exp35/*
+	# Run
+	-parallel -j 30 -v \
+			--joblog 'data/exp35.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/ching.py --file_name=data/exp35/result-g{1}-s{2}-{3}.pkl --num_pop=25000 --num_stim=2500 --p_stim=0.02 --stim_rate={2} --g_e={1} --output=False --stim_seed={3} --net_seed={3}' ::: 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4  ::: 0.5 1 1.5 2.0 2.5 3.0 ::: {1..100} 
+	# Extract 
+	-parallel -j 30 -v \
+			--joblog 'data/exp35.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/extract.py data/exp35/result-g{1}-s{2} data/exp35/result-g{1}-s{2}*.pkl' ::: 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4  ::: 0.5 1 1.5 2.0 2.5 3.0
+		
+exp36:
+	-mkdir data/exp36
+	-rm data/exp36/*
+	# Sample
+	-parallel -j 40 -v \
+			--joblog 'data/exp36.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/sample.py data/exp36/sample-g{1}-s{2} {3} data/exp35/result-g{1}-s{2}*.pkl' ::: 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4  ::: 0.5 1 1.5 2.0 2.5 3.0 ::: 160 10240
+
