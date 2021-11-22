@@ -389,7 +389,7 @@ ggsave("figures/example.pdf", dpi=300, width=2*3, height=2*5.4)
 ggsave("figures/example.png", dpi=300, width=2*3, height=2*5.4)
 ```
 
-# Figure - num_pop - Overall 1 
+# Figure - num_pop - circuit 1 
 ```{r, fig.width=8, fig.height=3, echo=FALSE, warning=FALSE, message=FALSE}
 tmp1 <- NULL
 tmp1 <- bind_rows(dmi_exp4, tmp1)
@@ -445,8 +445,8 @@ print(p2)
 # Build figure
 p1 + p2 + plot_layout(widths = c(0.2, 0.8)) +
   plot_annotation(tag_levels = 'a', tag_suffix = ".")
-ggsave("figures/overall1.pdf", dpi=300, width = 8, height = 3)
-ggsave("figures/overall1.png", dpi=300, width = 8, height = 3)
+ggsave("figures/circuit1.pdf", dpi=300, width = 8, height = 3)
+ggsave("figures/circuit1.png", dpi=300, width = 8, height = 3)
 ```
 
 # Figure - small - stim/g
@@ -713,13 +713,13 @@ p1 + p2 + p5 + p3 + p4 +
   ) +
   plot_layout(design = layout)
 ggsave(
-  "figures/overall2.pdf",
+  "figures/circuit2.pdf",
   dpi = 300,
   width = 9,
   height = 8
 )
 ggsave(
-  "figures/overall2.png",
+  "figures/circuit2.png",
   dpi = 300,
   width = 9,
   height = 8
@@ -732,7 +732,7 @@ ggsave(
 # compare_means(mi~model, tmp,  p.adjust.method = "bonf")
 ```
 
-# Figure - large - Overall 3 
+# Figure - large - circuit 3 
 ```{r, fig.width=9, fig.height=8, echo=FALSE, warning=FALSE, message=FALSE}
 tmp1 <- NULL
 tmp1 <- bind_rows(dmi_exp18, tmp1)
@@ -994,8 +994,8 @@ p1 + p2 + p5 + p3 + p4 +
     theme = theme(plot.title = element_text(size = 11, face = "bold"))
   ) +
   plot_layout(design = layout)
-ggsave("figures/overall3.pdf", dpi=300, width = 9, height = 8)
-ggsave("figures/overall3.png", dpi=300, width = 9, height = 8)
+ggsave("figures/circuit3.pdf", dpi=300, width = 9, height = 8)
+ggsave("figures/circuit3.png", dpi=300, width = 9, height = 8)
 ```
 
 
