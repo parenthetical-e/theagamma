@@ -514,12 +514,12 @@ exp38:
 	-mkdir data/exp38
 	-rm data/exp38/*
 	# Run
-	parallel -j 4 -v \
+	parallel -j 30 -v \
 			--joblog 'data/exp38.log' \
 			--nice 19 --colsep ',' \
 			'python theagamma/ing.py --file_name=data/exp38/result{1}-{2}.pkl --num_pop=25000 --num_stim=2500 --p_stim=0.02 --stim_rate={1} --output=False --stim_seed={2} --net_seed={2}' ::: 0.5 1 1.5 2.0 2.5 3.0 ::: {1..20} 
 	# Extract 
-	parallel -j 4 -v \
+	parallel -j 30 -v \
 			--joblog 'data/exp38.log' \
 			--nice 19 --colsep ',' \
 			'python theagamma/extract.py data/exp38/result{1} data/exp38/result{1}-*.pkl' ::: 0.5 1 1.5 2.0 2.5 3.0
@@ -529,12 +529,12 @@ exp39:
 	-mkdir data/exp39
 	-rm data/exp39/*
 	# Run
-	parallel -j 4 -v \
+	parallel -j 30 -v \
 			--joblog 'data/exp39.log' \
 			--nice 19 --colsep ',' \
 			'python theagamma/ping.py --file_name=data/exp39/result{1}-{2}.pkl --num_pop=25000 --num_stim=2500 --p_stim=0.02 --stim_rate={1} --output=False --stim_seed={2} --net_seed={2}' ::: 0.5 1 1.5 2.0 2.5 3.0 ::: {1..20} 
 	# Extract 
-	parallel -j 4 -v \
+	parallel -j 30 -v \
 			--joblog 'data/exp39.log' \
 			--nice 19 --colsep ',' \
 			'python theagamma/extract.py data/exp39/result{1} data/exp39/result{1}-*.pkl' ::: 0.5 1 1.5 2.0 2.5 3.0
@@ -544,12 +544,12 @@ exp40:
 	-mkdir data/exp40
 	-rm data/exp40/*
 	# Run
-	parallel -j 4 -v \
+	parallel -j 30 -v \
 			--joblog 'data/exp40.log' \
 			--nice 19 --colsep ',' \
 			'python theagamma/ching.py --file_name=data/exp40/result{1}-{2}.pkl --num_pop=25000 --num_stim=2500 --p_stim=0.02 --stim_rate={1} --output=False --stim_seed={2} --net_seed={2}' ::: 0.5 1 1.5 2.0 2.5 3.0 ::: {1..20} 
 	# Extract 
-	parallel -j 4 -v \
+	parallel -j 30 -v \
 			--joblog 'data/exp40.log' \
 			--nice 19 --colsep ',' \
 			'python theagamma/extract.py data/exp40/result{1} data/exp40/result{1}-*.pkl' ::: 0.5 1 1.5 2.0 2.5 3.0
