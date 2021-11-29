@@ -5,6 +5,7 @@ import fire
 from fakespikes import neurons, rates
 from theoc.lfp import create_lfps
 from theoc.metrics import discrete_dist
+from theoc.metrics import l2_error
 from theoc.metrics import discrete_entropy
 from theoc.metrics import discrete_mutual_information
 from theoc.metrics import normalize
@@ -469,6 +470,8 @@ def ing_coupling(num_pop=` 25000 `,
     d_deltas = {}
     d_hs = {}
     d_py = {}
+    d_errors = {}
+    d_delta_errors = {}
 
     #Save ref H and dist
     d_py["stim_ref"] = discrete_dist(y_ref, m)
@@ -483,6 +486,7 @@ def ing_coupling(num_pop=` 25000 `,
     d_py["stim_p"] = discrete_dist(y, m)
     d_mis["stim_p"] = discrete_mutual_information(y_ref, y, m)
     d_hs["stim_p"] = discrete_entropy(y, m)
+    d_errors["stim_p"] = l2_error(y_ref, y)
 
     #FS
     y = normalize(ratemonI.rate / Hz)
@@ -490,6 +494,7 @@ def ing_coupling(num_pop=` 25000 `,
     d_py["I"] = discrete_dist(y, m)
     d_mis["I"] = discrete_mutual_information(y_ref, y, m)
     d_hs["I"] = discrete_entropy(y, m)
+    d_errors["I"] = l2_error(y_ref, y)
 
     #RS
     y = normalize(ratemonE.rate / Hz)
@@ -497,6 +502,7 @@ def ing_coupling(num_pop=` 25000 `,
     d_py["E"] = discrete_dist(y, m)
     d_mis["E"] = discrete_mutual_information(y_ref, y, m)
     d_hs["E"] = discrete_entropy(y, m)
+    d_errors["E"] = l2_error(y_ref, y)
 
     #RS
     y = normalize(ratemonIosc.rate / Hz)
@@ -504,10 +510,15 @@ def ing_coupling(num_pop=` 25000 `,
     d_py["osc"] = discrete_dist(y, m)
     d_mis["osc"] = discrete_mutual_information(y_ref, y, m)
     d_hs["osc"] = discrete_entropy(y, m)
+    d_errors["osc"] = l2_error(y_ref, y)
 
     # Change in MI
     for k in d_mis.keys():
         d_deltas[k] = d_mis[k] - d_mis["stim_p"]
+
+    # Change in error
+    for k in d_errors.keys():
+        d_delta_errors[k] = d_errors[k] - d_errors["stim_p"]
 
     #############################################################################
     #Organizing Neuronal Spikes (for LFP Calculation)
@@ -747,6 +758,8 @@ def ing_coupling(num_pop=` 25000 `,
         'dMI': d_deltas,
         'H': d_hs,
         'p_y': d_py,
+        "l2": d_errors,
+        "dl2": d_delta_errors,
         'spikes': d_spikes,
         'rates': d_rates,
         'norm_rates': d_rescaled,

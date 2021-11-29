@@ -3,11 +3,14 @@ import numpy as np
 import fire
 
 from fakespikes import neurons, rates
+from numpy.linalg.linalg import _determine_error_states
 from theoc.lfp import create_lfps
 from theoc.metrics import discrete_dist
 from theoc.metrics import discrete_entropy
 from theoc.metrics import discrete_mutual_information
 from theoc.metrics import normalize
+from theoc.metrics import l2_error
+
 from theoc.oc import save_result
 from scipy.signal import welch
 from copy import deepcopy
@@ -471,6 +474,8 @@ def ching_coupling(
     d_deltas = {}
     d_hs = {}
     d_py = {}
+    d_errors = {}
+    d_delta_errors = {}
 
     #Save ref H and dist
     d_py["stim_ref"] = discrete_dist(y_ref, m)
@@ -485,6 +490,7 @@ def ching_coupling(
     d_py["stim_p"] = discrete_dist(y, m)
     d_mis["stim_p"] = discrete_mutual_information(y_ref, y, m)
     d_hs["stim_p"] = discrete_entropy(y, m)
+    d_errors["stim_p"] = l2_error(y_ref, y)
 
     #FS
     y = normalize(ratemonI.rate / Hz)
@@ -492,6 +498,7 @@ def ching_coupling(
     d_py["I"] = discrete_dist(y, m)
     d_mis["I"] = discrete_mutual_information(y_ref, y, m)
     d_hs["I"] = discrete_entropy(y, m)
+    d_errors["I"] = l2_error(y_ref, y)
 
     #RS
     y = normalize(ratemonE.rate / Hz)
@@ -499,6 +506,7 @@ def ching_coupling(
     d_py["E"] = discrete_dist(y, m)
     d_mis["E"] = discrete_mutual_information(y_ref, y, m)
     d_hs["E"] = discrete_entropy(y, m)
+    d_errors["E"] = l2_error(y_ref, y)
 
     #RSch
     y = normalize(ratemonEch.rate / Hz)
@@ -506,6 +514,7 @@ def ching_coupling(
     d_py["Ech"] = discrete_dist(y, m)
     d_mis["Ech"] = discrete_mutual_information(y_ref, y, m)
     d_hs["Ech"] = discrete_entropy(y, m)
+    d_errors["Ech"] = l2_error(y_ref, y)
 
     #RS
     y = normalize((ratemonI.rate + ratemonEch.rate + ratemonE.rate) / Hz)
@@ -513,11 +522,15 @@ def ching_coupling(
     d_py["osc"] = discrete_dist(y, m)
     d_mis["osc"] = discrete_mutual_information(y_ref, y, m)
     d_hs["osc"] = discrete_entropy(y, m)
+    d_errors["osc"] = l2_error(y_ref, y)
 
     # Change in MI
     for k in d_mis.keys():
         d_deltas[k] = d_mis[k] - d_mis["stim_p"]
 
+    # Change in error
+    for k in d_errors.keys():
+        d_delta_errors[k] = d_errors[k] - d_errors["stim_p"]
     #######################################################################
     #Organizing Neuronal Spikes (for LFP Calculation)
     #######################################################################
@@ -756,6 +769,8 @@ def ching_coupling(
         'dMI': d_deltas,
         'H': d_hs,
         'p_y': d_py,
+        "l2": d_errors,
+        "dl2": d_delta_errors,
         'spikes': d_spikes,
         'rates': d_rates,
         'norm_rates': d_rescaled,
