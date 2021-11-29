@@ -31,6 +31,7 @@ def ching_coupling(
         num_stim=500,
         p_stim=0.2,
         g_e=1.0,  # Gece_r (E)
+        tau_e=5.0,
         stim_rate=2,
         file_name=None,
         output=True,
@@ -85,7 +86,7 @@ def ching_coupling(
     ######################################################################
 
     tau_i = 5 * ms
-    tau_e = 5. * ms
+    tau_e = tau_e * ms
 
     #----------------------------
     #References synaptic weights

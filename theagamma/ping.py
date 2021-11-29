@@ -32,6 +32,8 @@ def ping_coupling(
         p_stim=0.2,
         g_ie=5,  # ie
         g_ei=1,  # ei
+        tau_i = 7.5,
+        tau_e = 1,
         file_name=None,
         stim_rate=2,
         output=True,
@@ -75,8 +77,8 @@ def ping_coupling(
     #Reescaling Synaptic Weights based on Synaptic Decay
     ################################################################################
 
-    tau_i = 7.5 * ms
-    tau_e = 1 * ms
+    tau_i = tau_i * ms
+    tau_e = tau_e * ms
 
     #----------------------------
     #Reference synaptic weights
