@@ -27,7 +27,7 @@ BrianLogger.suppress_hierarchy('brian2.codegen')
 BrianLogger.suppress_name('method_choice')
 
 
-def ing_coupling(num_pop=` 25000 `,
+def ing_coupling(num_pop=25000,
                  num_stim=500,
                  p_stim=0.2,
                  g_i=5.0,
