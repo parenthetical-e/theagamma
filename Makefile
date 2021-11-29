@@ -498,3 +498,90 @@ exp36:
 			--nice 19 --colsep ',' \
 			'python theagamma/sample.py data/exp36/sample-g{1}-s{2} {3} data/exp35/result-g{1}-s{2}*.pkl' ::: 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4  ::: 0.5 1 1.5 2.0 2.5 3.0 ::: 160 10240
 
+
+
+# -----------------------------------------------------------------
+# 11/29/2021
+# 
+#
+# Rerun pop-size with 
+# - smaller stin_rate, consistent with more recent experiment
+# - and to add l2_error output as a control. The latter was part of the PLOS 
+# reviewer response.
+#
+# ING
+exp38: 
+	-mkdir data/exp38
+	-rm data/exp38/*
+	# Run
+	parallel -j 4 -v \
+			--joblog 'data/exp38.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/ing.py --file_name=data/exp38/result{1}-{2}.pkl --num_pop=25000 --num_stim=2500 --p_stim=0.02 --stim_rate={1} --output=False --stim_seed={2} --net_seed={2}' ::: 0.5 1 1.5 2.0 2.5 3.0 ::: {1..20} 
+	# Extract 
+	parallel -j 4 -v \
+			--joblog 'data/exp38.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/extract.py data/exp38/result{1} data/exp38/result{1}-*.pkl' ::: 0.5 1 1.5 2.0 2.5 3.0
+
+# PING
+exp39: 
+	-mkdir data/exp39
+	-rm data/exp39/*
+	# Run
+	parallel -j 4 -v \
+			--joblog 'data/exp39.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/ping.py --file_name=data/exp39/result{1}-{2}.pkl --num_pop=25000 --num_stim=2500 --p_stim=0.02 --stim_rate={1} --output=False --stim_seed={2} --net_seed={2}' ::: 0.5 1 1.5 2.0 2.5 3.0 ::: {1..20} 
+	# Extract 
+	parallel -j 4 -v \
+			--joblog 'data/exp39.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/extract.py data/exp39/result{1} data/exp39/result{1}-*.pkl' ::: 0.5 1 1.5 2.0 2.5 3.0
+
+# CHING
+exp40: 
+	-mkdir data/exp40
+	-rm data/exp40/*
+	# Run
+	parallel -j 4 -v \
+			--joblog 'data/exp40.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/ching.py --file_name=data/exp40/result{1}-{2}.pkl --num_pop=25000 --num_stim=2500 --p_stim=0.02 --stim_rate={1} --output=False --stim_seed={2} --net_seed={2}' ::: 0.5 1 1.5 2.0 2.5 3.0 ::: {1..20} 
+	# Extract 
+	parallel -j 4 -v \
+			--joblog 'data/exp40.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/extract.py data/exp40/result{1} data/exp40/result{1}-*.pkl' ::: 0.5 1 1.5 2.0 2.5 3.0
+
+# Sample lower neuron numbers from exp38-3. Mimic pop_size in the `theoc`.
+# Data from exp38
+exp41:
+	-mkdir data/exp41
+	-rm data/exp41/*
+	# Sample
+	parallel -j 40 -v \
+			--joblog 'data/exp41.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/sample.py data/exp41/sample{1} {2} data/exp38/result{1}-*.pkl' ::: 0.5 1 1.5 2.0 2.5 3.0 ::: 10 20 40 80 160 320 640 1280 2560 5120 10240
+
+# Data from exp39
+exp42:
+	-mkdir data/exp42
+	-rm data/exp42/*
+	# Sample
+	parallel -j 40 -v \
+			--joblog 'data/exp42.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/sample.py data/exp42/sample{1} {2} data/exp39/result{1}-*.pkl' ::: 0.5 1 1.5 2.0 2.5 3.0 ::: 10 20 40 80 160 320 640 1280 2560 5120 10240
+
+
+# Data from exp40
+exp43:
+	-mkdir data/exp43
+	-rm data/exp43/*
+	# Sample
+	parallel -j 40 -v \
+			--joblog 'data/exp43.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/sample.py data/exp43/sample{1} {2} data/exp40/result{1}-*.pkl' ::: 0.5 1 1.5 2.0 2.5 3.0 ::: 10 20 40 80 160 320 640 1280 2560 5120 10240
