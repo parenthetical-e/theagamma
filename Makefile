@@ -2,7 +2,7 @@ SHELL=/bin/bash -O expand_aliases
 
 test_ing:
 	-rm data/test_ing.pkl
-	python theagamma/ing.py --num_stim=100 --file_name=data/test_ing.pkl --output=False
+	python theagamma/ing.py --file_name=data/test_ing.pkl --num_pop=25000 --num_stim=2500 --p_stim=0.02 --stim_rate=1 --stim_mode="drift" --output=False
 
 test_extract:
 	-rm data/test_ing*.csv
@@ -502,7 +502,7 @@ exp36:
 
 # -----------------------------------------------------------------
 # 11/29/2021
-# 
+# 300c5e7
 #
 # Rerun pop-size with 
 # - smaller stin_rate, consistent with more recent experiment
@@ -585,3 +585,109 @@ exp43:
 			--joblog 'data/exp43.log' \
 			--nice 19 --colsep ',' \
 			'python theagamma/sample.py data/exp43/sample{1} {2} data/exp40/result{1}-*.pkl' ::: 0.5 1 1.5 2.0 2.5 3.0 ::: 10 20 40 80 160 320 640 1280 2560 5120 10240
+
+
+# -----------------------------------------------------------------
+# 11/29/2021
+# 300c5e7
+#
+# Explore tau_e and tau_i in ING, CHING, PING. Hold g's fixed.
+
+# ING 
+exp44: 
+	-mkdir data/exp44
+	-rm data/exp44/*
+	# Run
+	-parallel -j 30 -v \
+			--joblog 'data/exp44.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/ing.py --file_name=data/exp44/result-t{1}-s{2}-{3}.pkl --num_pop=25000 --num_stim=2500 --p_stim=0.02 --stim_rate={2} --tau_i={1} --output=False --stim_seed={3} --net_seed={3}' ::: 5 5.2 5.3 5.4 5.6 5.8 6 6.2 6.4 ::: 0.5 1 1.5 2.0 2.5 3.0 ::: {1..20} 
+	# Extract 
+	-parallel -j 30 -v \
+			--joblog 'data/exp44.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/extract.py data/exp44/result-t{1}-s{2} data/exp44/result-t{1}-s{2}*.pkl' ::: 5 5.2 5.3 5.4 5.6 5.8 6 6.2 6.4 ::: 0.5 1 1.5 2.0 2.5 3.0
+
+exp45:
+	-mkdir data/exp45
+	-rm data/exp45/*
+	# Sample
+	-parallel -j 40 -v \
+			--joblog 'data/exp45.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/sample.py data/exp45/sample-t{1}-s{2} {3} data/exp44/result-t{1}-s{2}*.pkl' ::: 5 5.2 5.3 5.4 5.6 5.8 6 6.2 6.4 ::: 0.5 1 1.5 2.0 2.5 3.0 ::: 1280 10240
+
+# PING 
+# tau_e
+
+exp46: 
+	-mkdir data/exp46
+	-rm data/exp46/*
+	# Run
+	-parallel -j 30 -v \
+			--joblog 'data/exp46.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/ping.py --file_name=data/exp46/result-t{1}-s{2}-{3}.pkl --num_pop=25000 --num_stim=2500 --p_stim=0.02 --stim_rate={2} --tau_e={1} --tau_i=7.5 --output=False --stim_seed={3} --net_seed={3}' ::: 1 1.2 1.3 1.4 1.6 1.8 2 2.2 2.4  ::: 0.5 1 1.5 2.0 2.5 3.0 ::: {1..20} 
+	# Extract 
+	-parallel -j 30 -v \
+			--joblog 'data/exp46.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/extract.py data/exp46/result-t{1}-s{2} data/exp46/result-t{1}-s{2}*.pkl' ::: 1 1.2 1.3 1.4 1.6 1.8 2 2.2 2.4  ::: 0.5 1 1.5 2.0 2.5 3.0
+
+exp47:
+	-mkdir data/exp47
+	-rm data/exp47/*
+	# Sample
+	-parallel -j 40 -v \
+			--joblog 'data/exp47.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/sample.py data/exp47/sample-t{1}-s{2} {3} data/exp46/result-t{1}-s{2}*.pkl' ::: 1 1.2 1.3 1.4 1.6 1.8 2 2.2 2.4  ::: 0.5 1 1.5 2.0 2.5 3.0 ::: 1280 10240
+
+# tau_i
+exp48: 
+	-mkdir data/exp48
+	-rm data/exp48/*
+	# Run
+	-parallel -j 30 -v \
+			--joblog 'data/exp48.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/ping.py --file_name=data/exp48/result-t{1}-s{2}-{3}.pkl --num_pop=25000 --num_stim=2500 --p_stim=0.02 --stim_rate={2} --tau_e=1.0 --tau_i={1} --output=False --stim_seed={3} --net_seed={3}' ::: 6.5 6.75 7.0 7.25 7.5 7.75 8.0 8.25 8.5 ::: 0.5 1 1.5 2.0 2.5 3.0 ::: {1..20} 
+	# Extract 
+	-parallel -j 30 -v \
+			--joblog 'data/exp48.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/extract.py data/exp48/result-t{1}-s{2} data/exp48/result-t{1}-s{2}*.pkl' ::: 6.5 6.75 7.0 7.25 7.5 7.75 8.0 8.25 8.5 ::: 0.5 1 1.5 2.0 2.5 3.0
+
+exp49:
+	-mkdir data/exp49
+	-rm data/exp49/*
+	# Sample
+	-parallel -j 40 -v \
+			--joblog 'data/exp49.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/sample.py data/exp49/sample-t{1}-s{2} {3} data/exp48/result-t{1}-s{2}*.pkl' ::: 6.5 6.75 7.0 7.25 7.5 7.75 8.0 8.25 8.5 ::: 0.5 1 1.5 2.0 2.5 3.0 ::: 1280 10240 
+
+# CHING
+# tau_e
+exp50: 
+	-mkdir data/exp50
+	-rm data/exp50/*
+	# Run
+	-parallel -j 30 -v \
+			--joblog 'data/exp50.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/ching.py --file_name=data/exp50/result-t{1}-s{2}-{3}.pkl --num_pop=25000 --num_stim=2500 --p_stim=0.02 --stim_rate={2} --tau_e={1} --output=False --stim_seed={3} --net_seed={3}' ::: 4.0 4.25 4.5 4.75 5 5.25 5.5 5.75 6.0  ::: 0.5 1 1.5 2.0 2.5 3.0 ::: {1..20} 
+	# Extract 
+	-parallel -j 30 -v \
+			--joblog 'data/exp50.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/extract.py data/exp50/result-t{1}-s{2} data/exp50/result-t{1}-s{2}*.pkl' ::: 4.0 4.25 4.5 4.75 5 5.25 5.5 5.75 6.0  ::: 0.5 1 1.5 2.0 2.5 3.0
+		
+exp51:
+	-mkdir data/exp51
+	-rm data/exp51/*
+	# Sample
+	-parallel -j 40 -v \
+			--joblog 'data/exp51.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/sample.py data/exp51/sample-t{1}-s{2} {3} data/exp50/result-t{1}-s{2}*.pkl' ::: 4.0 4.25 4.5 4.75 5 5.25 5.5 5.75 6.0  ::: 0.5 1 1.5 2.0 2.5 3.0 ::: 160 10240
