@@ -3,7 +3,7 @@ import numpy as np
 import fire
 
 from fakespikes import neurons, rates
-from numpy.linalg.linalg import _determine_error_states
+# from numpy.linalg.linalg import _determine_error_states
 from theoc.lfp import create_lfps
 from theoc.metrics import discrete_dist
 from theoc.metrics import discrete_entropy
