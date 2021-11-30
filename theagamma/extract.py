@@ -2,24 +2,9 @@
 # -*- coding: utf-8 -*-
 
 import fire
-import sys
 import pandas as pd
-import os
-import numpy as np
-
-from joblib import Parallel, delayed
-from itertools import product
 from collections import defaultdict
-
 from theoc.oc import load_result
-from theoc.metrics import discrete_dist
-from theoc.metrics import discrete_entropy
-from theoc.metrics import discrete_mutual_information
-from theoc.metrics import normalize
-
-from theagamma.util import select_n
-from theagamma.util import bin_times
-from theagamma.util import to_spikemat
 
 
 def run(output_name, *file_names):
@@ -29,6 +14,8 @@ def run(output_name, *file_names):
     H = defaultdict(list)
     MI = defaultdict(list)
     dMI = defaultdict(list)
+    l2 = defaultdict(list)
+    dl2 = defaultdict(list)
     power = defaultdict(list)
     center = defaultdict(list)
 
@@ -55,6 +42,16 @@ def run(output_name, *file_names):
             dMI[b].append(res['dMI'][b])
         dMI["trial"].append(i)
 
+        # l2 error
+        for b in res['l2'].keys():
+            l2[b].append(res['l2'][b])
+        l2["trial"].append(i)
+
+        # Change in MI, dMI
+        for b in res['dl2'].keys():
+            dl2[b].append(res['dl2'][b])
+        dl2["trial"].append(i)
+
         # Peak power
         for b in res['power'].keys():
             power[b].append(res['power'][b])
@@ -72,6 +69,10 @@ def run(output_name, *file_names):
     df_MI.to_csv(output_name + "_MI.csv", index=False)
     df_dMI = pd.DataFrame(dMI)
     df_dMI.to_csv(output_name + "_dMI.csv", index=False)
+    df_l2 = pd.DataFrame(l2)
+    df_l2.to_csv(output_name + "_l2.csv", index=False)
+    df_dl2 = pd.DataFrame(dl2)
+    df_dl2.to_csv(output_name + "_dl2.csv", index=False)s
     df_power = pd.DataFrame(power)
     df_power.to_csv(output_name + "_power.csv", index=False)
     df_center = pd.DataFrame(center)
