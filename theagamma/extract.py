@@ -72,7 +72,7 @@ def run(output_name, *file_names):
     df_l2 = pd.DataFrame(l2)
     df_l2.to_csv(output_name + "_l2.csv", index=False)
     df_dl2 = pd.DataFrame(dl2)
-    df_dl2.to_csv(output_name + "_dl2.csv", index=False)s
+    df_dl2.to_csv(output_name + "_dl2.csv", index=False)
     df_power = pd.DataFrame(power)
     df_power.to_csv(output_name + "_power.csv", index=False)
     df_center = pd.DataFrame(center)
