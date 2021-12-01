@@ -20,7 +20,7 @@ from theagamma.util import to_spikemat
 def run(output_name, n, *file_names):
 
     # params
-    dt = 1e-3  # ms resolution
+    dt = 1e-4  # ms resolution
     m = 8
     simultation_time = 6
 
