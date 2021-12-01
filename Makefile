@@ -518,6 +518,8 @@ exp38:
 			--joblog 'data/exp38.log' \
 			--nice 19 --colsep ',' \
 			'python theagamma/ing.py --file_name=data/exp38/result{1}-{2}.pkl --num_pop=25000 --num_stim=2500 --p_stim=0.02 --stim_rate={1} --output=False --stim_seed={2} --net_seed={2}' ::: 0.5 1 1.5 2.0 2.5 3.0 ::: {1..20} 
+
+exp38x:
 	# Extract 
 	parallel -j 30 -v \
 			--joblog 'data/exp38.log' \
