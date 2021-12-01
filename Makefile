@@ -535,6 +535,8 @@ exp39:
 			--joblog 'data/exp39.log' \
 			--nice 19 --colsep ',' \
 			'python theagamma/ping.py --file_name=data/exp39/result{1}-{2}.pkl --num_pop=25000 --num_stim=2500 --p_stim=0.02 --stim_rate={1} --output=False --stim_seed={2} --net_seed={2}' ::: 0.5 1 1.5 2.0 2.5 3.0 ::: {1..20} 
+
+exp39x:
 	# Extract 
 	parallel -j 30 -v \
 			--joblog 'data/exp39.log' \
@@ -550,6 +552,8 @@ exp40:
 			--joblog 'data/exp40.log' \
 			--nice 19 --colsep ',' \
 			'python theagamma/ching.py --file_name=data/exp40/result{1}-{2}.pkl --num_pop=25000 --num_stim=2500 --p_stim=0.02 --stim_rate={1} --output=False --stim_seed={2} --net_seed={2}' ::: 0.5 1 1.5 2.0 2.5 3.0 ::: {1..20} 
+
+exp40x:
 	# Extract 
 	parallel -j 30 -v \
 			--joblog 'data/exp40.log' \
@@ -604,6 +608,8 @@ exp44:
 			--joblog 'data/exp44.log' \
 			--nice 19 --colsep ',' \
 			'python theagamma/ing.py --file_name=data/exp44/result-t{1}-s{2}-{3}.pkl --num_pop=25000 --num_stim=2500 --p_stim=0.02 --stim_rate={2} --tau_i={1} --output=False --stim_seed={3} --net_seed={3}' ::: 5 5.2 5.3 5.4 5.6 5.8 6 6.2 6.4 ::: 0.5 1 1.5 2.0 2.5 3.0 ::: {1..20} 
+
+exp44x:
 	# Extract 
 	-parallel -j 30 -v \
 			--joblog 'data/exp44.log' \
@@ -630,6 +636,8 @@ exp46:
 			--joblog 'data/exp46.log' \
 			--nice 19 --colsep ',' \
 			'python theagamma/ping.py --file_name=data/exp46/result-t{1}-s{2}-{3}.pkl --num_pop=25000 --num_stim=2500 --p_stim=0.02 --stim_rate={2} --tau_e={1} --tau_i=7.5 --output=False --stim_seed={3} --net_seed={3}' ::: 1 1.2 1.3 1.4 1.6 1.8 2 2.2 2.4  ::: 0.5 1 1.5 2.0 2.5 3.0 ::: {1..20} 
+
+exp46x:	
 	# Extract 
 	-parallel -j 30 -v \
 			--joblog 'data/exp46.log' \
@@ -654,6 +662,8 @@ exp48:
 			--joblog 'data/exp48.log' \
 			--nice 19 --colsep ',' \
 			'python theagamma/ping.py --file_name=data/exp48/result-t{1}-s{2}-{3}.pkl --num_pop=25000 --num_stim=2500 --p_stim=0.02 --stim_rate={2} --tau_e=1.0 --tau_i={1} --output=False --stim_seed={3} --net_seed={3}' ::: 6.5 6.75 7.0 7.25 7.5 7.75 8.0 8.25 8.5 ::: 0.5 1 1.5 2.0 2.5 3.0 ::: {1..20} 
+
+exp48x:
 	# Extract 
 	-parallel -j 30 -v \
 			--joblog 'data/exp48.log' \
@@ -679,6 +689,8 @@ exp50:
 			--joblog 'data/exp50.log' \
 			--nice 19 --colsep ',' \
 			'python theagamma/ching.py --file_name=data/exp50/result-t{1}-s{2}-{3}.pkl --num_pop=25000 --num_stim=2500 --p_stim=0.02 --stim_rate={2} --tau_e={1} --output=False --stim_seed={3} --net_seed={3}' ::: 4.0 4.25 4.5 4.75 5 5.25 5.5 5.75 6.0  ::: 0.5 1 1.5 2.0 2.5 3.0 ::: {1..20} 
+
+exp50x:
 	# Extract 
 	-parallel -j 30 -v \
 			--joblog 'data/exp50.log' \
