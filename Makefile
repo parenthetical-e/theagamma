@@ -508,6 +508,10 @@ exp36:
 # - smaller stin_rate, consistent with more recent experiment
 # - and to add l2_error output as a control. The latter was part of the PLOS 
 # reviewer response.
+# 
+# RESULT: l2 errors follows the same patterns are MI estimates. BUT, the ING 
+#         model result  look different than the current paper (exp1/4). This
+#         should not be?
 #
 # ING
 exp38: 
@@ -705,3 +709,109 @@ exp51:
 			--joblog 'data/exp51.log' \
 			--nice 19 --colsep ',' \
 			'python theagamma/sample.py data/exp51/sample-t{1}-s{2} {3} data/exp50/result-t{1}-s{2}*.pkl' ::: 4.0 4.25 4.5 4.75 5 5.25 5.5 5.75 6.0  ::: 0.5 1 1.5 2.0 2.5 3.0 ::: 160 10240
+
+
+#  -------------------------------------------------------------------------
+# 12/2/2021
+# 
+#
+# Rerun 'g' experiments to make ssure results are consistent with most recent 
+# recipes (exp38-51)
+
+# ING 
+exp52: 
+	-mkdir data/exp52
+	-rm data/exp52/*
+	# Run
+	-parallel -j 30 -v \
+			--joblog 'data/exp52.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/ing.py --file_name=data/exp52/result-g{1}-s{2}-{3}.pkl --num_pop=25000 --num_stim=2500 --p_stim=0.02 --stim_rate={2} --g_i={1} --output=False --stim_seed={3} --net_seed={3}' ::: 3 3.5 4 4.5 5 5.5 6.0 6.5 7.0 ::: 0.5 1 1.5 2.0 2.5 3.0 ::: {1..20} 
+	# Extract 
+	-parallel -j 30 -v \
+			--joblog 'data/exp52.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/extract.py data/exp52/result-g{1}-s{2} data/exp52/result-g{1}-s{2}*.pkl' ::: 3 3.5 4 4.5 5 5.5 6.0 6.5 7.0 ::: 0.5 1 1.5 2.0 2.5 3.0
+
+exp53:
+	-mkdir data/exp53
+	-rm data/exp53/*
+	# Sample
+	-parallel -j 40 -v \
+			--joblog 'data/exp53.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/sample.py data/exp53/sample-g{1}-s{2} {3} data/exp52/result-g{1}-s{2}*.pkl' ::: 3 3.5 4 4.5 5 5.5 6.0 6.5 7.0 ::: 0.5 1 1.5 2.0 2.5 3.0 ::: 1280 10240
+
+# PING 
+# ei
+exp54: 
+	-mkdir data/exp54
+	-rm data/exp54/*
+	# Run
+	-parallel -j 30 -v \
+			--joblog 'data/exp54.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/ping.py --file_name=data/exp54/result-g{1}-s{2}-{3}.pkl --num_pop=25000 --num_stim=2500 --p_stim=0.02 --stim_rate={2} --g_ie=5 --g_ei={1} --output=False --stim_seed={3} --net_seed={3}' ::: 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4  ::: 0.5 1 1.5 2.0 2.5 3.0 ::: {1..20} 
+	# Extract 
+	-parallel -j 30 -v \
+			--joblog 'data/exp54.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/extract.py data/exp54/result-g{1}-s{2} data/exp54/result-g{1}-s{2}*.pkl' ::: 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4  ::: 0.5 1 1.5 2.0 2.5 3.0
+
+exp55:
+	-mkdir data/exp55
+	-rm data/exp55/*
+	# Sample
+	-parallel -j 40 -v \
+			--joblog 'data/exp55.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/sample.py data/exp55/sample-g{1}-s{2} {3} data/exp54/result-g{1}-s{2}*.pkl' ::: 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4  ::: 0.5 1 1.5 2.0 2.5 3.0 ::: 1280 10240
+
+# ie
+exp56: 
+	-mkdir data/exp56
+	-rm data/exp56/*
+	# Run
+	-parallel -j 30 -v \
+			--joblog 'data/exp56.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/ping.py --file_name=data/exp56/result-g{1}-s{2}-{3}.pkl --num_pop=25000 --num_stim=2500 --p_stim=0.02 --stim_rate={2} --g_ie={1} --g_ei=1.0 --output=False --stim_seed={3} --net_seed={3}' ::: 3 3.5 4 4.5 5 5.5 6.0 6.5 7.0 ::: 0.5 1 1.5 2.0 2.5 3.0 ::: {1..20} 
+	# Extract 
+	-parallel -j 30 -v \
+			--joblog 'data/exp56.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/extract.py data/exp56/result-g{1}-s{2} data/exp56/result-g{1}-s{2}*.pkl' ::: 3 3.5 4 4.5 5 5.5 6.0 6.5 7.0 ::: 0.5 1 1.5 2.0 2.5 3.0
+
+exp57:
+	-mkdir data/exp57
+	-rm data/exp57/*
+	# Sample
+	-parallel -j 40 -v \
+			--joblog 'data/exp57.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/sample.py data/exp57/sample-g{1}-s{2} {3} data/exp56/result-g{1}-s{2}*.pkl' ::: 3 3.5 4 4.5 5 5.5 6.0 6.5 7.0 ::: 0.5 1 1.5 2.0 2.5 3.0 ::: 1280 10240 
+
+# CHING
+exp58: 
+	-mkdir data/exp58
+	-rm data/exp58/*
+	# Run
+	-parallel -j 30 -v \
+			--joblog 'data/exp58.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/ching.py --file_name=data/exp58/result-g{1}-s{2}-{3}.pkl --num_pop=25000 --num_stim=2500 --p_stim=0.02 --stim_rate={2} --g_e={1} --output=False --stim_seed={3} --net_seed={3}' ::: 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4  ::: 0.5 1 1.5 2.0 2.5 3.0 ::: {1..20} 
+	# Extract 
+	-parallel -j 30 -v \
+			--joblog 'data/exp58.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/extract.py data/exp58/result-g{1}-s{2} data/exp58/result-g{1}-s{2}*.pkl' ::: 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4  ::: 0.5 1 1.5 2.0 2.5 3.0
+		
+exp59:
+	-mkdir data/exp59
+	-rm data/exp59/*
+	# Sample
+	-parallel -j 40 -v \
+			--joblog 'data/exp59.log' \
+			--nice 19 --colsep ',' \
+			'python theagamma/sample.py data/exp59/sample-g{1}-s{2} {3} data/exp58/result-g{1}-s{2}*.pkl' ::: 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4  ::: 0.5 1 1.5 2.0 2.5 3.0 ::: 160 10240
+
