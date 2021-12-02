@@ -1,0 +1,259 @@
+---
+title: "Exp analysis - exp38-40"
+output: html_notebook
+---
+
+```{r helper_fns, echo=FALSE, fig.width=6, fig.height=4, echo=FALSE, warning=FALSE, message=FALSE}
+library(ggplot2)
+library(grid)
+library(gridExtra)
+library(plyr)
+library(readr)
+library(dplyr)
+library(png)
+library(psd)
+library(tidyr)
+```
+
+# Load data
+```{r load, message=FALSE, warning=FALSE, error=FALSE}
+stim_rates <- c("0.5", "1", "1.5", "2.0", "2.5", "3.0")
+
+# exp38
+path <- "~/Code/theagamma/data/exp38/"
+dl2_exp38 <- NULL
+for(stim_rate in stim_rates){
+  file_name <- paste(path, "result", stim_rate, "_dl2.csv", sep="")
+  df <- read.csv(file_name)
+  df$stim_rate <- as.numeric(stim_rate)
+  dl2_exp38 <- bind_rows(df, dl2_exp38)
+}
+
+dmi_exp38 <- NULL
+for(stim_rate in stim_rates){
+  file_name <- paste(path, "result", stim_rate, "_dMI.csv", sep="")
+  df <- read.csv(file_name)
+  df$stim_rate <- as.numeric(stim_rate)
+  dmi_exp38 <- bind_rows(df, dmi_exp38)
+}
+
+pow_exp38 <- NULL
+for(stim_rate in stim_rates){
+  file_name <- paste(path, "result", stim_rate, "_power.csv", sep="")
+  df <- read.csv(file_name)
+  df$stim_rate <- as.numeric(stim_rate)
+  pow_exp38 <- bind_rows(df, pow_exp38)
+}
+
+# exp39
+path <- "~/Code/theagamma/data/exp39/"
+dl2_exp39 <- NULL
+for(stim_rate in stim_rates){
+  file_name <- paste(path, "result", stim_rate, "_dl2.csv", sep="")
+  df <- read.csv(file_name)
+  df$stim_rate <- as.numeric(stim_rate)
+  dl2_exp39 <- bind_rows(df, dl2_exp39)
+}
+
+dmi_exp39 <- NULL
+for(stim_rate in stim_rates){
+  file_name <- paste(path, "result", stim_rate, "_dMI.csv", sep="")
+  df <- read.csv(file_name)
+  df$stim_rate <- as.numeric(stim_rate)
+  dmi_exp39 <- bind_rows(df, dmi_exp39)
+}
+
+pow_exp39 <- NULL
+for(stim_rate in stim_rates){
+  file_name <- paste(path, "result", stim_rate, "_power.csv", sep="")
+  df <- read.csv(file_name)
+  df$stim_rate <- as.numeric(stim_rate)
+  pow_exp39 <- bind_rows(df, pow_exp39)
+}
+
+# exp40
+path <- "~/Code/theagamma/data/exp40/"
+dl2_exp40 <- NULL
+for(stim_rate in stim_rates){
+  file_name <- paste(path, "result", stim_rate, "_dl2.csv", sep="")
+  df <- read.csv(file_name)
+  df$stim_rate <- as.numeric(stim_rate)
+  dl2_exp40 <- bind_rows(df, dl2_exp40)
+}
+
+dmi_exp40 <- NULL
+for(stim_rate in stim_rates){
+  file_name <- paste(path, "result", stim_rate, "_dMI.csv", sep="")
+  df <- read.csv(file_name)
+  df$stim_rate <- as.numeric(stim_rate)
+  dmi_exp40 <- bind_rows(df, dmi_exp40)
+}
+
+pow_exp40 <- NULL
+for(stim_rate in stim_rates){
+  file_name <- paste(path, "result", stim_rate, "_power.csv", sep="")
+  df <- read.csv(file_name)
+  df$stim_rate <- as.numeric(stim_rate)
+  pow_exp40 <- bind_rows(df, pow_exp40)
+}
+
+```
+
+# Exp 38
+## dMI 
+```{r, fig.width=4, fig.height=2, echo=FALSE, warning=FALSE, message=FALSE}
+dmi_exp38 %>% 
+  gather(model, mi, stim_p:osc) -> tmp
+
+tmp %>% 
+  filter(model %in% c("E", "I", "osc")) %>%
+  ggplot(aes(x=stim_rate, y=mi, group=stim_rate)) +
+  # geom_point(size=.4, alpha=0.2) +
+  geom_boxplot() +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  labs(y="Delta MI (bits)", x="Stimulus rate") +
+  theme_classic() +
+  facet_wrap(model~., nrow=1) 
+```
+
+## Power
+```{r, fig.width=2, fig.height=2, echo=FALSE, warning=FALSE, message=FALSE}
+pow_exp38 %>% 
+  # filter(model %in% c("E", "I", "osc")) %>%
+  ggplot(aes(x=stim_rate, y=lfp_gamma, group=stim_rate)) +
+  geom_boxplot() +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  labs(y="Power", x="Stimulus rate") +
+  theme_classic() 
+  # facet_wrap(model~., nrow=1) 
+```
+## Power v dMI
+### all
+```{r, fig.width=4, fig.height=2, echo=FALSE, warning=FALSE, message=FALSE}
+tmp <- right_join(pow_exp38, dmi_exp38)
+tmp %>% 
+  ggplot(aes(x=lfp_gamma, y=E)) +
+  geom_point(size=0.5) +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  labs(y="Delta MI (bits)", x="Gamma power") +
+  theme_classic()
+```
+
+### by stim
+```{r, fig.width=5, fig.height=2, echo=FALSE, warning=FALSE, message=FALSE}
+tmp <- right_join(pow_exp38, dmi_exp38)
+tmp %>% 
+  ggplot(aes(x=lfp_gamma, y=E)) +
+  geom_point(size=0.5) +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  labs(y="Delta MI (bits)", x="Gamma power") +
+  theme_classic() +
+  facet_grid(.~stim_rate)
+```
+
+# Exp 39
+## dMI 
+```{r, fig.width=4, fig.height=2, echo=FALSE, warning=FALSE, message=FALSE}
+dmi_exp39 %>% 
+  gather(model, mi, stim_p:osc) -> tmp
+
+tmp %>% 
+  filter(model %in% c("E", "I", "osc")) %>%
+  ggplot(aes(x=stim_rate, y=mi, group=stim_rate)) +
+  # geom_point(size=.4, alpha=0.2) +
+  geom_boxplot() +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  labs(y="Delta MI (bits)", x="Stimulus rate") +
+  theme_classic() +
+  facet_wrap(model~., nrow=1) 
+```
+
+## Power
+```{r, fig.width=2, fig.height=2, echo=FALSE, warning=FALSE, message=FALSE}
+pow_exp39 %>% 
+  # filter(model %in% c("E", "I", "osc")) %>%
+  ggplot(aes(x=stim_rate, y=lfp_gamma, group=stim_rate)) +
+  geom_boxplot() +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  labs(y="Power", x="Stimulus rate") +
+  theme_classic() 
+  # facet_wrap(model~., nrow=1) 
+```
+
+## Power v dMI
+### all
+```{r, fig.width=4, fig.height=2, echo=FALSE, warning=FALSE, message=FALSE}
+tmp <- right_join(pow_exp39, dmi_exp39)
+tmp %>% 
+  ggplot(aes(x=lfp_gamma, y=E)) +
+  geom_point(size=0.5) +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  labs(y="Delta MI (bits)", x="Gamma power") +
+  theme_classic()
+```
+
+### by stim
+```{r, fig.width=5, fig.height=2, echo=FALSE, warning=FALSE, message=FALSE}
+tmp <- right_join(pow_exp39, dmi_exp39)
+tmp %>% 
+  ggplot(aes(x=lfp_gamma, y=E)) +
+  geom_point(size=0.5) +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  labs(y="Delta MI (bits)", x="Gamma power") +
+  theme_classic() +
+  facet_grid(.~stim_rate)
+```
+
+
+# Exp 40
+## dMI 
+```{r, fig.width=4, fig.height=2, echo=FALSE, warning=FALSE, message=FALSE}
+dmi_exp40 %>% 
+  gather(model, mi, stim_p:osc) -> tmp
+
+tmp %>% 
+  filter(model %in% c("E", "I", "osc")) %>%
+  ggplot(aes(x=stim_rate, y=mi, group=stim_rate)) +
+  # geom_point(size=.4, alpha=0.2) +
+  geom_boxplot() +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  labs(y="Delta MI (bits)", x="Stimulus rate") +
+  theme_classic() +
+  facet_wrap(model~., nrow=1) 
+```
+
+## Power
+```{r, fig.width=2, fig.height=2, echo=FALSE, warning=FALSE, message=FALSE}
+pow_exp40 %>% 
+  # filter(model %in% c("E", "I", "osc")) %>%
+  ggplot(aes(x=stim_rate, y=lfp_gamma, group=stim_rate)) +
+  geom_boxplot() +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  labs(y="Power", x="Stimulus rate") +
+  theme_classic() 
+  # facet_wrap(model~., nrow=1) 
+```
+
+## Power v dMI
+### All
+```{r, fig.width=4, fig.height=2, echo=FALSE, warning=FALSE, message=FALSE}
+tmp <- right_join(pow_exp40, dmi_exp40)
+tmp %>% 
+  ggplot(aes(x=lfp_gamma, y=E)) +
+  geom_point(size=0.5) +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  labs(y="Delta MI (bits)", x="Gamma power") +
+  theme_classic()
+```
+
+### by stim
+```{r, fig.width=5, fig.height=2, echo=FALSE, warning=FALSE, message=FALSE}
+tmp <- right_join(pow_exp40, dmi_exp40)
+tmp %>% 
+  ggplot(aes(x=lfp_gamma, y=E)) +
+  geom_point(size=0.5) +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  labs(y="Delta MI (bits)", x="Gamma power") +
+  theme_classic() +
+  facet_grid(.~stim_rate)
+```

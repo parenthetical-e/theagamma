@@ -21,11 +21,13 @@ library(patchwork)
 ```{r load1, message=FALSE, warning=FALSE, error=FALSE}
 # -- num_pop search-----------------------------------------------------------
 # dMI (choose stim_rate, sweep g)
-stim_rates <- c('1', '2', '3', '4')
+# stim_rates <- c('1', '2', '3', '4')
+stim_rates <- c("0.5", "1", "1.5", "2.0", "2.5", "3.0")
 num_pops <- c('40', '80', '160', '320', '640', '1280', '2560', '5120', '10240')
 
 # exp4
-path <- "~/Code/theagamma/data/exp4/"
+# path <- "~/Code/theagamma/data/exp4/"
+path <- "~/Code/theagamma/data/exp41/"
 dmi_exp4 <- NULL
 for(stim_rate in stim_rates){
   for (num_pop in num_pops) {
@@ -47,8 +49,8 @@ for(stim_rate in stim_rates){
 }
 
 # exp5
-path <- "~/Code/theagamma/data/exp5/"
-
+# path <- "~/Code/theagamma/data/exp5/"
+path <- "~/Code/theagamma/data/exp42/"
 dmi_exp5 <- NULL
 for(stim_rate in stim_rates){
   for (num_pop in num_pops) {
@@ -70,7 +72,8 @@ for(stim_rate in stim_rates){
 }
 
 # exp6
-path <- "~/Code/theagamma/data/exp6/"
+# path <- "~/Code/theagamma/data/exp6/"
+path <- "~/Code/theagamma/data/exp43/"
 dmi_exp6 <- NULL
 for(stim_rate in stim_rates){
   for (num_pop in num_pops) {
@@ -97,7 +100,8 @@ gs <- c('3', '3.5', '4', '4.5', '5', '5.5', '6.0', '6.5', '7.0')
 stim_rates <- c('0.5', '1', '1.5', '2.0', '2.5', '3.0')
 num_pops <- c('1280', '10240')
 
-path <- "~/Code/theagamma/data/exp18/"
+# path <- "~/Code/theagamma/data/exp18/"
+path <- "~/Code/theagamma/data/exp53/"
 dmi_exp18 <- NULL
 for(g in gs){
   for(stim_rate in stim_rates){
@@ -127,7 +131,8 @@ gs <- c('0.6', '0.7', '0.8', '0.9', '1.0', '1.1', '1.2', '1.3', '1.4')
 stim_rates <- c('0.5', '1', '1.5', '2.0', '2.5', '3.0')
 num_pops <- c('1280', '10240')
 
-path <- "~/Code/theagamma/data/exp20/"
+# path <- "~/Code/theagamma/data/exp20/"
+path <- "~/Code/theagamma/data/exp55/"
 dmi_exp20 <- NULL
 for(g in gs){
   for(stim_rate in stim_rates){
@@ -157,7 +162,8 @@ gs <- c('3', '3.5', '4', '4.5', '5', '5.5', '6.0', '6.5', '7.0')
 stim_rates <- c('0.5', '1', '1.5', '2.0', '2.5', '3.0')
 num_pops <- c('1280', '10240')
 
-path <- "~/Code/theagamma/data/exp22/"
+# path <- "~/Code/theagamma/data/exp22/"
+path <- "~/Code/theagamma/data/exp57/"
 dmi_exp22 <- NULL
 for(g in gs){
   for(stim_rate in stim_rates){
@@ -187,7 +193,8 @@ gs <- c('0.6', '0.7', '0.8', '0.9', '1.0', '1.1', '1.2', '1.3', '1.4')
 stim_rates <- c('0.5', '1', '1.5', '2.0', '2.5', '3.0')
 num_pops <- c('160', '10240')
 
-path <- "~/Code/theagamma/data/exp24/"
+# path <- "~/Code/theagamma/data/exp24/"
+path <- "~/Code/theagamma/data/exp59/"
 dmi_exp24 <- NULL
 for(g in gs){
   for(stim_rate in stim_rates){
@@ -208,6 +215,120 @@ for(g in gs){
       df$model <- "CHING"
       df$g_code <- "g_E"
       dmi_exp24 <- bind_rows(df, dmi_exp24)
+    }
+  }
+}
+
+# TAU ------------------------------------------------------------
+# ING
+taus <- c('5', '5.2', '5.3', '5.4', '5.6', '5.8', '6', '6.2', '6.4')
+stim_rates <- c('0.5', '1', '1.5', '2.0', '2.5', '3.0')
+num_pops <- c('1280', '10240')
+# exp45
+path <- "~/Code/theagamma/data/exp45/"
+dmi_exp45 <- NULL
+for(g in taus){
+  for(stim_rate in stim_rates){
+    for (num_pop in num_pops) {
+      file_name <-
+        paste(path,
+              "sample-t",
+              g,
+              "-s",
+              stim_rate,
+              "_",
+              num_pop,
+              "_dMI.csv",
+              sep = "")
+      df <- read.csv(file_name)
+      df$g <- as.numeric(g)
+      df$stim_rate <- as.numeric(stim_rate)
+      dmi_exp45 <- bind_rows(df, dmi_exp45)
+    }
+  }
+}
+
+# PING - t_E
+taus <- c('1', '1.2', '1.3', '1.4', '1.6', '1.8', '2', '2.2', '2.4')
+stim_rates <- c('0.5', '1', '1.5', '2.0', '2.5', '3.0')
+num_pops <- c('1280', '10240')
+
+path <- "~/Code/theagamma/data/exp47/"
+dmi_exp47 <- NULL
+for(g in taus){
+  for(stim_rate in stim_rates){
+    for (num_pop in num_pops) {
+      file_name <-
+        paste(path,
+              "sample-t",
+              g,
+              "-s",
+              stim_rate,
+              "_",
+              num_pop,
+              "_dMI.csv",
+              sep = "")
+      df <- read.csv(file_name)
+      df$g <- as.numeric(g)
+      df$stim_rate <- as.numeric(stim_rate)
+      dmi_exp47 <- bind_rows(df, dmi_exp47)
+    }
+  }
+}
+
+# PING - t_I
+taus <- c('6.5', '6.75', '7.0', '7.25', '7.5', '7.75', '8.0', '8.25', '8.5')
+stim_rates <- c('0.5', '1', '1.5', '2.0', '2.5', '3.0')
+num_pops <- c('1280', '10240')
+
+path <- "~/Code/theagamma/data/exp49/"
+dmi_exp49 <- NULL
+for(g in taus){
+  for(stim_rate in stim_rates){
+    for (num_pop in num_pops) {
+      file_name <-
+        paste(path,
+              "sample-t",
+              g,
+              "-s",
+              stim_rate,
+              "_",
+              num_pop,
+              "_dMI.csv",
+              sep = "")
+      df <- read.csv(file_name)
+      df$g <- as.numeric(g)
+      df$stim_rate <- as.numeric(stim_rate)
+      dmi_exp49 <- bind_rows(df, dmi_exp49)
+    }
+  }
+}
+
+# CHING = t_E
+taus <- c('4.0', '4.25', '4.5', '4.75', '5', '5.25', '5.5', '5.75', '6.0')
+stim_rates <- c('0.5', '1', '1.5', '2.0', '2.5', '3.0')
+num_pops <- c('160', '10240')
+
+# exp51
+path <- "~/Code/theagamma/data/exp51/"
+dmi_exp51 <- NULL
+for(g in taus){
+  for(stim_rate in stim_rates){
+    for (num_pop in num_pops) {
+      file_name <-
+        paste(path,
+              "sample-t",
+              g,
+              "-s",
+              stim_rate,
+              "_",
+              num_pop,
+              "_dMI.csv",
+              sep = "")
+      df <- read.csv(file_name)
+      df$g <- as.numeric(g)
+      df$stim_rate <- as.numeric(stim_rate)
+      dmi_exp51 <- bind_rows(df, dmi_exp51)
     }
   }
 }
@@ -400,7 +521,7 @@ tmp1$model <- factor(tmp1$model, levels=c("ING", "PING", "CHING"))
 # -----------------------------------------------
 # Jitter all
 tmp1 %>% 
-  filter(stim_rate == 1) %>%
+  # filter(stim_rate == 1) %>%
   ggplot(aes(x=model, y=E)) +
   geom_jitter(size=.1, alpha=0.4, width=0.3) +
   stat_summary(aes(group=model), fun.y=mean,
@@ -415,7 +536,7 @@ tmp1 %>%
 # -----------------------------------------------
 # Num. pop. sequence
 tmp1 %>%
-  filter(stim_rate == 1) %>% 
+  # filter(stim_rate == 1) %>% 
   group_by(model, num_pop) %>%
   summarise(M=mean(E),
             SD=sd(E)) -> 
@@ -999,5 +1120,241 @@ ggsave("figures/circuit3.png", dpi=300, width = 9, height = 8)
 ```
 
 
-# Figure - Power 
-## ^ TODO
+# Figure - tau 
+```{r, fig.width=4, fig.height=8, echo=FALSE, warning=FALSE, message=FALSE}
+# ING
+dmi_exp45 %>%
+  filter(stim_rate == 1) %>%
+  group_by(num_pop, g) %>%
+  summarise(M=mean(E),
+            SD=sd(E)) -> 
+  tmp
+
+tmp %>% 
+  filter(num_pop >= 40) %>% 
+  ggplot(aes(x=g, y=M)) +
+  # geom_jitter() +
+  geom_line(size=0.7, alpha=1) +
+  geom_ribbon(aes(ymin=M-SD, ymax=M+SD), alpha=0.2, color=NA) +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  labs(y = expression(paste(Delta, "MI (bits)")),
+       x = expression(tau[I]),
+       # title = "Model: PING (E)") +
+       title=expression(paste("ING - all ", tau[I]))) +
+  lims(y = c(-0.3, 0.3)) +
+  theme_classic() +
+  theme(strip.background = element_blank()) +
+  theme(legend.background = element_rect(colour ="black")) +
+  theme(legend.key.size = unit(.3, "cm")) +
+  theme(panel.spacing = unit(1, "lines")) +
+  theme(strip.text.x = element_text(face = "bold")) +
+  theme(plot.title = element_text(size = 11, face = "bold")) +
+  scale_color_manual("", values = c(
+    "lightsteelblue3",
+    "lightskyblue3",
+    "steelblue3",
+    "steelblue4",
+    "slateblue2", 
+    "slateblue3",
+    "slateblue4",
+    "mediumpurple4",
+    "darkorchid4"
+    )) +
+  facet_grid(.~num_pop) -> tt1
+
+# PING 
+dmi_exp47 %>%
+  filter(stim_rate == 1) %>%
+  group_by(num_pop, g) %>%
+  summarise(M=mean(E),
+            SD=sd(E)) -> 
+  tmp
+
+tmp %>% 
+  filter(num_pop >= 40) %>% 
+  ggplot(aes(x=g, y=M)) +
+  # geom_jitter() +
+  geom_line(size=0.7, alpha=1) +
+  geom_ribbon(aes(ymin=M-SD, ymax=M+SD), alpha=0.2, color=NA) +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  labs(y = expression(paste(Delta, "MI (bits)")),
+       x = expression(tau[E]),
+       # title = "Model: PING (E)") +
+       title=expression(paste("PING - all ", tau[E]))) +
+  lims(y = c(-0.3, 0.3)) +
+  theme_classic() +
+  theme(strip.background = element_blank()) +
+  theme(legend.background = element_rect(colour ="black")) +
+  theme(legend.key.size = unit(.3, "cm")) +
+  theme(panel.spacing = unit(1, "lines")) +
+  theme(strip.text.x = element_text(face = "bold")) +
+  theme(plot.title = element_text(size = 11, face = "bold")) +
+  scale_color_manual("", values = c(
+    "lightsteelblue3",
+    "lightskyblue3",
+    "steelblue3",
+    "steelblue4",
+    "slateblue2", 
+    "slateblue3",
+    "slateblue4",
+    "mediumpurple4",
+    "darkorchid4"
+    )) +
+  facet_grid(.~num_pop) -> tt2
+
+dmi_exp49 %>%
+  filter(stim_rate == 1) %>%
+  group_by(num_pop, g) %>%
+  summarise(M=mean(E),
+            SD=sd(E)) -> 
+  tmp
+
+tmp %>% 
+  filter(num_pop >= 40) %>% 
+  ggplot(aes(x=g, y=M)) +
+  # geom_jitter() +
+  geom_line(size=0.7, alpha=1) +
+  geom_ribbon(aes(ymin=M-SD, ymax=M+SD), alpha=0.2, color=NA) +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  labs(y = expression(paste(Delta, "MI (bits)")),
+       x = expression(tau[I]),
+       # title = "Model: PING (E)") +
+       title=expression(paste("PING - all ", tau[I]))) +
+  lims(y = c(-0.3, 0.3)) +
+  theme_classic() +
+  theme(strip.background = element_blank()) +
+  theme(legend.background = element_rect(colour ="black")) +
+  theme(legend.key.size = unit(.3, "cm")) +
+  theme(panel.spacing = unit(1, "lines")) +
+  theme(strip.text.x = element_text(face = "bold")) +
+  theme(plot.title = element_text(size = 11, face = "bold")) +
+  scale_color_manual("", values = c(
+    "lightsteelblue3",
+    "lightskyblue3",
+    "steelblue3",
+    "steelblue4",
+    "slateblue2", 
+    "slateblue3",
+    "slateblue4",
+    "mediumpurple4",
+    "darkorchid4"
+    )) +
+  facet_grid(.~num_pop) -> tt3
+
+dmi_exp51 %>%
+  filter(stim_rate == 1) %>%
+  group_by(num_pop, g) %>%
+  summarise(M=mean(E),
+            SD=sd(E)) -> 
+  tmp
+
+tmp %>% 
+  filter(num_pop >= 40) %>% 
+  ggplot(aes(x=g, y=M)) +
+  # geom_jitter() +
+  geom_line(size=0.7, alpha=1) +
+  geom_ribbon(aes(ymin=M-SD, ymax=M+SD), alpha=0.2, color=NA) +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  labs(y = expression(paste(Delta, "MI (bits)")),
+       x = expression(tau[E]),
+       # title = "Model: PING (E)") +
+       title=expression(paste("CHING - all ", tau[E]))) +
+  lims(y = c(-0.3, 0.3)) +
+  theme_classic() +
+  theme(strip.background = element_blank()) +
+  theme(legend.background = element_rect(colour ="black")) +
+  theme(legend.key.size = unit(.3, "cm")) +
+  theme(panel.spacing = unit(1, "lines")) +
+  theme(strip.text.x = element_text(face = "bold")) +
+  theme(plot.title = element_text(size = 10, face = "bold")) +
+  scale_color_manual("", values = c(
+    "lightsteelblue3",
+    "lightskyblue3",
+    "steelblue3",
+    "steelblue4",
+    "slateblue2", 
+    "slateblue3",
+    "slateblue4",
+    "mediumpurple4",
+    "darkorchid4"
+    )) +
+  facet_grid(.~num_pop) -> tt4
+
+tt1 / tt2 / tt3 / tt4 +
+  plot_annotation(
+    tag_levels = 'a',
+    tag_suffix = "."
+  )
+ggsave(
+  "figures/circuit4.pdf",
+  dpi = 300,
+  width = 4,
+  height = 8
+)
+ggsave(
+  "figures/circuit4.png",
+  dpi = 300,
+  width = 4,
+  height = 8
+)
+```
+
+# Figure - Error (pop_size) 
+```{r, fig.width=8, fig.height=3, echo=FALSE, warning=FALSE, message=FALSE}
+tmp1 <- NULL
+tmp1 <- bind_rows(dmi_exp4, tmp1)
+tmp1 <- bind_rows(dmi_exp5, tmp1)
+tmp1 <- bind_rows(dmi_exp6, tmp1)
+tmp1$model <- factor(tmp1$model, levels=c("ING", "PING", "CHING"))
+
+# -----------------------------------------------
+# Jitter all
+tmp1 %>% 
+  # filter(stim_rate == 1) %>%
+  ggplot(aes(x=model, y=E)) +
+  geom_jitter(size=.1, alpha=0.4, width=0.3) +
+  stat_summary(aes(group=model), fun.y=mean,
+               geom="point", colour="black", alpha=1, size=14, shape="_") +
+  geom_hline(yintercept=0, color="dark grey", size=0.5) + xlab("") +
+  labs(y=expression(paste(Delta, "MI (bits)")), x="Model", title="") +
+  theme_classic() + 
+  theme(plot.title = element_text(size = 7, hjust=3, face = "bold")) -> 
+  p1
+# print(p1)
+
+# -----------------------------------------------
+# Num. pop. sequence
+tmp1 %>%
+  # filter(stim_rate == 1) %>% 
+  group_by(model, num_pop) %>%
+  summarise(M=mean(E),
+            SD=sd(E)) -> 
+  tmp2
+tmp2$model <- factor(tmp2$model, levels=c("ING", "PING", "CHING"))
+
+tmp2 %>% 
+  # ggplot(aes(x=num_pop,  y=m, color=factor(g), group=factor(g))) +
+  ggplot(aes(x=as.numeric(num_pop), y=M)) +
+  geom_line(size=0.7, alpha=1) +
+  geom_ribbon(aes(ymin=M-SD, ymax=M+SD), alpha=0.2, color=NA) +
+  geom_hline(yintercept=0, color="dark grey") + xlab("") +
+  scale_x_log10() +
+  annotation_logticks(sides="b") + 
+  labs(y=expression(paste(Delta, "MI (bits)")), x="Population size") +
+  theme_classic() +
+  theme(strip.background = element_blank()) +
+  theme(legend.background = element_rect(colour ="black")) +
+  theme(legend.key.size = unit(.3, "cm")) +
+  theme(panel.spacing = unit(1, "lines")) +
+  theme(strip.text.x = element_text(face = "bold")) +
+  facet_grid(.~model) ->
+  p2
+print(p2)
+
+# -----------------------------------------------
+# Build figure
+p1 + p2 + plot_layout(widths = c(0.2, 0.8)) +
+  plot_annotation(tag_levels = 'a', tag_suffix = ".")
+ggsave("figures/circuit1.pdf", dpi=300, width = 8, height = 3)
+ggsave("figures/circuit1.png", dpi=300, width = 8, height = 3)
+```

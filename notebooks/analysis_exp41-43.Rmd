@@ -1,0 +1,749 @@
+---
+title: "Exp analysis - exp41-43"
+output: html_notebook
+---
+
+```{r helper_fns, echo=FALSE, fig.width=6, fig.height=4, echo=FALSE, warning=FALSE, message=FALSE}
+library(ggplot2)
+library(grid)
+library(gridExtra)
+library(plyr)
+library(readr)
+library(dplyr)
+library(png)
+library(psd)
+library(tidyr)
+library(patchwork)
+```
+
+# Load data
+```{r load, message=FALSE, warning=FALSE, error=FALSE}
+stim_rates <- c("0.5", "1", "1.5", "2.0", "2.5", "3.0")
+num_pops <- c(40, 80, 160, 320, 640, 1280, 2560, 5120, 10240)
+
+# exp41
+path <- "~/Code/theagamma/data/exp41/"
+dmi_exp41 <- NULL
+for(stim_rate in stim_rates){
+  for (num_pop in num_pops) {
+    file_name <-
+      paste(
+        path,
+        "sample",
+        as.character(stim_rate),
+        "_",
+        as.character(num_pop),
+        "_dMI.csv",
+        sep = ""
+      )
+    df <- read.csv(file_name)
+    df$stim_rate <- as.numeric(stim_rate)
+    dmi_exp41 <- bind_rows(df, dmi_exp41)
+  }
+}
+dl2_exp41 <- NULL
+for(stim_rate in stim_rates){
+  for (num_pop in num_pops) {
+    file_name <-
+      paste(
+        path,
+        "sample",
+        as.character(stim_rate),
+        "_",
+        as.character(num_pop),
+        "_dl2.csv",
+        sep = ""
+      )
+    df <- read.csv(file_name)
+    df$stim_rate <- as.numeric(stim_rate)
+    dl2_exp41 <- bind_rows(df, dl2_exp41)
+  }
+}
+
+# exp42
+path <- "~/Code/theagamma/data/exp42/"
+
+dmi_exp42 <- NULL
+for(stim_rate in stim_rates){
+  for (num_pop in num_pops) {
+    file_name <-
+      paste(
+        path,
+        "sample",
+        as.character(stim_rate),
+        "_",
+        as.character(num_pop),
+        "_dMI.csv",
+        sep = ""
+      )
+    df <- read.csv(file_name)
+    df$stim_rate <- as.numeric(stim_rate)
+    dmi_exp42 <- bind_rows(df, dmi_exp42)
+  }
+}
+dl2_exp42 <- NULL
+for(stim_rate in stim_rates){
+  for (num_pop in num_pops) {
+    file_name <-
+      paste(
+        path,
+        "sample",
+        as.character(stim_rate),
+        "_",
+        as.character(num_pop),
+        "_dl2.csv",
+        sep = ""
+      )
+    df <- read.csv(file_name)
+    df$stim_rate <- as.numeric(stim_rate)
+    dl2_exp42 <- bind_rows(df, dl2_exp42)
+  }
+}
+
+# exp43
+path <- "~/Code/theagamma/data/exp43/"
+dmi_exp43 <- NULL
+for(stim_rate in stim_rates){
+  for (num_pop in num_pops) {
+    file_name <-
+      paste(
+        path,
+        "sample",
+        as.character(stim_rate),
+        "_",
+        as.character(num_pop),
+        "_dMI.csv",
+        sep = ""
+      )
+    df <- read.csv(file_name)
+    df$stim_rate <- as.numeric(stim_rate)
+    dmi_exp43 <- bind_rows(df, dmi_exp43)
+  }
+}
+dl2_exp43 <- NULL
+for(stim_rate in stim_rates){
+  for (num_pop in num_pops) {
+    file_name <-
+      paste(
+        path,
+        "sample",
+        as.character(stim_rate),
+        "_",
+        as.character(num_pop),
+        "_dl2.csv",
+        sep = ""
+      )
+    df <- read.csv(file_name)
+    df$stim_rate <- as.numeric(stim_rate)
+    dl2_exp43 <- bind_rows(df, dl2_exp43)
+  }
+}
+```
+
+# Exp 41
+## dMI 
+### all
+```{r, fig.width=8, fig.height=3, echo=FALSE, warning=FALSE, message=FALSE}
+dmi_exp41 %>% 
+  # filter(stim_rate == 2) %>% 
+  filter(num_pop >= 40) %>% 
+  group_by(num_pop) %>% 
+  summarise(M=mean(E), SD=sd(E)) %>%
+  ggplot(aes(x=num_pop, y=M)) +
+  geom_ribbon(aes(ymin = M-SD, ymax = M+SD), fill="grey", alpha=0.4) +
+  geom_line(size=0.8, alpha=1) +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  scale_x_log10() +
+  annotation_logticks(sides="b") + 
+  labs(y = expression(paste(Delta, "MI (bits)")),
+       x = "Population size",
+       title = "Model: ING") +
+  theme_classic() +
+  theme(strip.background = element_blank()) +
+  theme(legend.background = element_rect(colour ="black")) +
+  theme(legend.key.size = unit(.3, "cm")) +
+  theme(panel.spacing = unit(1, "lines")) +
+  theme(strip.text.x = element_text(face = "bold")) +
+  theme(plot.title = element_text(size = 11, face = "bold")) -> p1
+print(p1)
+```
+
+### stim_rate 
+#### m/sd
+```{r, fig.width=8, fig.height=3, echo=FALSE, warning=FALSE, message=FALSE}
+dmi_exp41 %>% 
+  filter(num_pop >= 40) %>% 
+  group_by(num_pop, stim_rate) %>% 
+  summarise(M=mean(E), SD=sd(E)) %>%
+  ggplot(aes(x=num_pop, y=M)) +
+  geom_ribbon(aes(ymin = M-SD, ymax = M+SD), fill="grey", alpha=0.4) +
+  geom_line(size=0.8, alpha=1) +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  scale_x_log10() +
+  annotation_logticks(sides="b") + 
+  labs(y = expression(paste(Delta, "MI (bits)")),
+       x = "Population size",
+       title = "Model: ING") +
+  theme_classic() +
+  theme(strip.background = element_blank()) +
+  theme(legend.background = element_rect(colour ="black")) +
+  theme(legend.key.size = unit(.3, "cm")) +
+  theme(panel.spacing = unit(1, "lines")) +
+  theme(strip.text.x = element_text(face = "bold")) +
+  theme(plot.title = element_text(size = 11, face = "bold")) +
+  facet_grid(.~stim_rate) -> p1a
+print(p1a)
+```
+### jitter
+```{r, fig.width=3, fig.height=3, echo=FALSE, warning=FALSE, message=FALSE}
+dmi_exp41 %>% 
+  filter(num_pop >= 40) %>% 
+  ggplot(aes(x=num_pop, y=E)) +
+  geom_jitter() +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  scale_x_log10() +
+  annotation_logticks(sides="b") + 
+  labs(y = expression(paste(Delta, "MI (bits)")),
+       x = "Population size",
+       title = "Model: ING") +
+  theme_classic() +
+  theme(strip.background = element_blank()) +
+  theme(legend.background = element_rect(colour ="black")) +
+  theme(legend.key.size = unit(.3, "cm")) +
+  theme(panel.spacing = unit(1, "lines")) +
+  theme(strip.text.x = element_text(face = "bold")) +
+  theme(plot.title = element_text(size = 11, face = "bold")) -> o1
+print(o1)
+```
+
+```{r, fig.width=8, fig.height=3, echo=FALSE, warning=FALSE, message=FALSE}
+dmi_exp41 %>% 
+  filter(num_pop >= 40) %>% 
+  ggplot(aes(x=num_pop, y=E)) +
+  geom_jitter() +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  scale_x_log10() +
+  annotation_logticks(sides="b") + 
+  labs(y = expression(paste(Delta, "MI (bits)")),
+       x = "Population size",
+       title = "Model: ING") +
+  theme_classic() +
+  theme(strip.background = element_blank()) +
+  theme(legend.background = element_rect(colour ="black")) +
+  theme(legend.key.size = unit(.3, "cm")) +
+  theme(panel.spacing = unit(1, "lines")) +
+  theme(strip.text.x = element_text(face = "bold")) +
+  theme(plot.title = element_text(size = 11, face = "bold")) +
+  facet_grid(.~stim_rate)
+```
+
+## dl2 
+### all
+```{r, fig.width=8, fig.height=3, echo=FALSE, warning=FALSE, message=FALSE}
+dl2_exp41 %>% 
+  # filter(stim_rate == 2) %>% 
+  filter(num_pop >= 40) %>% 
+  group_by(num_pop) %>% 
+  summarise(M=mean(E), SD=sd(E)) %>%
+  ggplot(aes(x=num_pop, y=M)) +
+  geom_ribbon(aes(ymin = M-SD, ymax = M+SD), fill="grey", alpha=0.4) +
+  geom_line(size=0.8, alpha=1) +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  scale_x_log10() +
+  annotation_logticks(sides="b") + 
+  labs(y = "Error",
+       x = "Population size",
+       title = "Model: ING") +
+  theme_classic() +
+  theme(strip.background = element_blank()) +
+  theme(legend.background = element_rect(colour ="black")) +
+  theme(legend.key.size = unit(.3, "cm")) +
+  theme(panel.spacing = unit(1, "lines")) +
+  theme(strip.text.x = element_text(face = "bold")) +
+  theme(plot.title = element_text(size = 11, face = "bold")) -> e1
+print(e1)
+```
+
+### mean/stim_rate
+```{r, fig.width=8, fig.height=3, echo=FALSE, warning=FALSE, message=FALSE}
+dl2_exp41 %>% 
+  filter(num_pop >= 40) %>% 
+  group_by(num_pop, stim_rate) %>% 
+  summarise(M=mean(E), SD=sd(E)) %>%
+  ggplot(aes(x=num_pop, y=M)) +
+  geom_ribbon(aes(ymin = M-SD, ymax = M+SD), fill="grey", alpha=0.4) +
+  geom_line(size=0.8, alpha=1) +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  scale_x_log10() +
+  annotation_logticks(sides="b") + 
+  labs(y = "Error",
+       x = "Population size",
+       title = "Model: ING") +
+  theme_classic() +
+  theme(strip.background = element_blank()) +
+  theme(legend.background = element_rect(colour ="black")) +
+  theme(legend.key.size = unit(.3, "cm")) +
+  theme(panel.spacing = unit(1, "lines")) +
+  theme(strip.text.x = element_text(face = "bold")) +
+  theme(plot.title = element_text(size = 11, face = "bold")) + 
+  facet_grid(.~stim_rate) 
+```
+
+### jitter
+```{r, fig.width=3, fig.height=3, echo=FALSE, warning=FALSE, message=FALSE}
+dl2_exp41 %>% 
+  filter(num_pop >= 40) %>% 
+  ggplot(aes(x=num_pop, y=E)) +
+  geom_jitter() +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  scale_x_log10() +
+  annotation_logticks(sides="b") + 
+  labs(y = "Error",
+       x = "Population size",
+       title = "Model: ING") +
+  theme_classic() +
+  theme(strip.background = element_blank()) +
+  theme(legend.background = element_rect(colour ="black")) +
+  theme(legend.key.size = unit(.3, "cm")) +
+  theme(panel.spacing = unit(1, "lines")) +
+  theme(strip.text.x = element_text(face = "bold")) +
+  theme(plot.title = element_text(size = 11, face = "bold")) -> d1
+print(d1)
+```
+
+```{r, fig.width=8, fig.height=3, echo=FALSE, warning=FALSE, message=FALSE}
+dl2_exp41 %>% 
+  filter(num_pop >= 40) %>% 
+  ggplot(aes(x=num_pop, y=E)) +
+  geom_jitter() +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  scale_x_log10() +
+  annotation_logticks(sides="b") + 
+  labs(y = "Error",
+       x = "Population size",
+       title = "Model: ING") +
+  theme_classic() +
+  theme(strip.background = element_blank()) +
+  theme(legend.background = element_rect(colour ="black")) +
+  theme(legend.key.size = unit(.3, "cm")) +
+  theme(panel.spacing = unit(1, "lines")) +
+  theme(strip.text.x = element_text(face = "bold")) +
+  theme(plot.title = element_text(size = 11, face = "bold")) +
+  facet_grid(.~stim_rate)
+```
+
+# Exp 42
+## dMI 
+### all
+```{r, fig.width=8, fig.height=3, echo=FALSE, warning=FALSE, message=FALSE}
+dmi_exp42 %>% 
+  filter(num_pop >= 40) %>% 
+  group_by(num_pop) %>% 
+  summarise(M=mean(E), SD=sd(E)) %>%
+  ggplot(aes(x=num_pop, y=M)) +
+  geom_ribbon(aes(ymin = M-SD, ymax = M+SD), fill="grey", alpha=0.4) +
+  geom_line(size=0.8, alpha=1) +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  scale_x_log10() +
+  annotation_logticks(sides="b") + 
+  labs(y = expression(paste(Delta, "MI (bits)")),
+       x = "Population size",
+       title = "Model: PING") +
+  theme_classic() +
+  theme(strip.background = element_blank()) +
+  theme(legend.background = element_rect(colour ="black")) +
+  theme(legend.key.size = unit(.3, "cm")) +
+  theme(panel.spacing = unit(1, "lines")) +
+  theme(strip.text.x = element_text(face = "bold")) +
+  theme(plot.title = element_text(size = 11, face = "bold")) -> p2
+print(p2)
+```
+
+### stim_rate
+#### m/sd
+```{r, fig.width=8, fig.height=3, echo=FALSE, warning=FALSE, message=FALSE}
+dmi_exp42 %>% 
+  filter(num_pop >= 40) %>% 
+  group_by(num_pop, stim_rate) %>% 
+  summarise(M=mean(E), SD=sd(E)) %>%
+  ggplot(aes(x=num_pop, y=M)) +
+  geom_ribbon(aes(ymin = M-SD, ymax = M+SD), fill="grey", alpha=0.4) +
+  geom_line(size=0.8, alpha=1) +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  scale_x_log10() +
+  annotation_logticks(sides="b") + 
+  labs(y = expression(paste(Delta, "MI (bits)")),
+       x = "Population size",
+       title = "Model: PING") +
+  theme_classic() +
+  theme(strip.background = element_blank()) +
+  theme(legend.background = element_rect(colour ="black")) +
+  theme(legend.key.size = unit(.3, "cm")) +
+  theme(panel.spacing = unit(1, "lines")) +
+  theme(strip.text.x = element_text(face = "bold")) +
+  theme(plot.title = element_text(size = 11, face = "bold")) +
+  facet_grid(.~stim_rate) -> p2a
+print(p2a)
+```
+#### Jitter
+```{r, fig.width=3, fig.height=3, echo=FALSE, warning=FALSE, message=FALSE}
+dmi_exp42 %>% 
+  filter(num_pop >= 40) %>% 
+  ggplot(aes(x=num_pop, y=E)) +
+  geom_jitter() +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  scale_x_log10() +
+  annotation_logticks(sides="b") + 
+  labs(y = expression(paste(Delta, "MI (bits)")),
+       x = "Population size",
+       title = "Model: PING") +
+  theme_classic() +
+  theme(strip.background = element_blank()) +
+  theme(legend.background = element_rect(colour ="black")) +
+  theme(legend.key.size = unit(.3, "cm")) +
+  theme(panel.spacing = unit(1, "lines")) +
+  theme(strip.text.x = element_text(face = "bold")) +
+  theme(plot.title = element_text(size = 11, face = "bold")) -> o2
+print(o2)
+```
+
+```{r, fig.width=8, fig.height=3, echo=FALSE, warning=FALSE, message=FALSE}
+dmi_exp42 %>% 
+  filter(num_pop >= 40) %>% 
+  ggplot(aes(x=num_pop, y=E)) +
+  geom_jitter() +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  scale_x_log10() +
+  annotation_logticks(sides="b") + 
+  labs(y = expression(paste(Delta, "MI (bits)")),
+       x = "Population size",
+       title = "Model: PING") +
+  theme_classic() +
+  theme(strip.background = element_blank()) +
+  theme(legend.background = element_rect(colour ="black")) +
+  theme(legend.key.size = unit(.3, "cm")) +
+  theme(panel.spacing = unit(1, "lines")) +
+  theme(strip.text.x = element_text(face = "bold")) +
+  theme(plot.title = element_text(size = 11, face = "bold")) +
+  facet_grid(.~stim_rate)
+```
+
+## dl2 
+### all
+```{r, fig.width=8, fig.height=3, echo=FALSE, warning=FALSE, message=FALSE}
+dl2_exp42 %>% 
+  # filter(stim_rate == 2) %>% 
+  filter(num_pop >= 40) %>% 
+  group_by(num_pop) %>% 
+  summarise(M=mean(E), SD=sd(E)) %>%
+  ggplot(aes(x=num_pop, y=M)) +
+  geom_ribbon(aes(ymin = M-SD, ymax = M+SD), fill="grey", alpha=0.4) +
+  geom_line(size=0.8, alpha=1) +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  scale_x_log10() +
+  annotation_logticks(sides="b") + 
+  labs(y = "Error",
+       x = "Population size",
+       title = "Model: PING") +
+  theme_classic() +
+  theme(strip.background = element_blank()) +
+  theme(legend.background = element_rect(colour ="black")) +
+  theme(legend.key.size = unit(.3, "cm")) +
+  theme(panel.spacing = unit(1, "lines")) +
+  theme(strip.text.x = element_text(face = "bold")) +
+  theme(plot.title = element_text(size = 11, face = "bold")) -> e2
+print(e2)
+```
+### mean/stim_rate
+```{r, fig.width=9, fig.height=4, echo=FALSE, warning=FALSE, message=FALSE}
+dl2_exp42 %>% 
+  filter(num_pop >= 40) %>% 
+  group_by(num_pop, stim_rate) %>% 
+  summarise(M=mean(E), SD=sd(E)) %>%
+  ggplot(aes(x=num_pop, y=M)) +
+  geom_ribbon(aes(ymin = M-SD, ymax = M+SD), fill="grey", alpha=0.4) +
+  geom_line(size=0.8, alpha=1) +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  scale_x_log10() +
+  annotation_logticks(sides="b") + 
+  labs(y = "Error",
+       x = "Population size",
+       title = "Model:PING") +
+  theme_classic() +
+  theme(strip.background = element_blank()) +
+  theme(legend.background = element_rect(colour ="black")) +
+  theme(legend.key.size = unit(.3, "cm")) +
+  theme(panel.spacing = unit(1, "lines")) +
+  theme(strip.text.x = element_text(face = "bold")) +
+  theme(plot.title = element_text(size = 11, face = "bold")) + 
+  facet_grid(.~stim_rate)
+```
+
+### jitter
+```{r, fig.width=3, fig.height=3, echo=FALSE, warning=FALSE, message=FALSE}
+dl2_exp42 %>% 
+  filter(num_pop >= 40) %>% 
+  ggplot(aes(x=num_pop, y=E)) +
+  geom_jitter() +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  scale_x_log10() +
+  annotation_logticks(sides="b") + 
+  labs(y = "Error",
+       x = "Population size",
+       title = "Model: PING") +
+  theme_classic() +
+  theme(strip.background = element_blank()) +
+  theme(legend.background = element_rect(colour ="black")) +
+  theme(legend.key.size = unit(.3, "cm")) +
+  theme(panel.spacing = unit(1, "lines")) +
+  theme(strip.text.x = element_text(face = "bold")) +
+  theme(plot.title = element_text(size = 11, face = "bold")) -> d2
+print(d2)
+```
+
+```{r, fig.width=8, fig.height=3, echo=FALSE, warning=FALSE, message=FALSE}
+dl2_exp42 %>% 
+  filter(num_pop >= 40) %>% 
+  ggplot(aes(x=num_pop, y=E)) +
+  geom_jitter() +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  scale_x_log10() +
+  annotation_logticks(sides="b") + 
+  labs(y = "Error",
+       x = "Population size",
+       title = "Model: PING") +
+  theme_classic() +
+  theme(strip.background = element_blank()) +
+  theme(legend.background = element_rect(colour ="black")) +
+  theme(legend.key.size = unit(.3, "cm")) +
+  theme(panel.spacing = unit(1, "lines")) +
+  theme(strip.text.x = element_text(face = "bold")) +
+  theme(plot.title = element_text(size = 11, face = "bold")) +
+  facet_grid(.~stim_rate)
+```
+
+# Exp 43
+## dMI 
+### all
+```{r, fig.width=8, fig.height=3, echo=FALSE, warning=FALSE, message=FALSE}
+dmi_exp43 %>% 
+  filter(num_pop >= 40) %>%
+  group_by(num_pop) %>% 
+  summarise(M=mean(E), SD=sd(E)) %>%
+  ggplot(aes(x=num_pop, y=M)) +
+  geom_ribbon(aes(ymin = M-SD, ymax = M+SD), fill="grey", alpha=0.4) +
+  geom_line(size=0.8, alpha=1) +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  scale_x_log10() +
+  annotation_logticks(sides="b") + 
+  labs(y = expression(paste(Delta, "MI (bits)")),
+       x = "Population size",
+       title = "Model: CHING") +
+  theme_classic() +
+  theme(strip.background = element_blank()) +
+  theme(legend.background = element_rect(colour ="black")) +
+  theme(legend.key.size = unit(.3, "cm")) +
+  theme(panel.spacing = unit(1, "lines")) +
+  theme(strip.text.x = element_text(face = "bold")) +
+  theme(plot.title = element_text(size = 11, face = "bold")) -> p3
+print(p3)
+```
+
+#### m/sd
+```{r, fig.width=8, fig.height=3, echo=FALSE, warning=FALSE, message=FALSE}
+dmi_exp43 %>% 
+  filter(num_pop >= 40) %>% 
+  group_by(num_pop, stim_rate) %>% 
+  summarise(M=mean(E), SD=sd(E)) %>%
+  ggplot(aes(x=num_pop, y=M)) +
+  geom_ribbon(aes(ymin = M-SD, ymax = M+SD), fill="grey", alpha=0.4) +
+  geom_line(size=0.8, alpha=1) +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  scale_x_log10() +
+  annotation_logticks(sides="b") + 
+  labs(y = expression(paste(Delta, "MI (bits)")),
+       x = "Population size",
+       title = "Model: CHING") +
+  theme_classic() +
+  theme(strip.background = element_blank()) +
+  theme(legend.background = element_rect(colour ="black")) +
+  theme(legend.key.size = unit(.3, "cm")) +
+  theme(panel.spacing = unit(1, "lines")) +
+  theme(strip.text.x = element_text(face = "bold")) +
+  theme(plot.title = element_text(size = 11, face = "bold")) +
+  facet_grid(.~stim_rate) -> p3a
+
+print(p3a)
+```
+#### jitter
+```{r, fig.width=3, fig.height=3, echo=FALSE, warning=FALSE, message=FALSE}
+dmi_exp43 %>% 
+  filter(num_pop >= 40) %>% 
+  ggplot(aes(x=num_pop, y=E)) +
+  geom_jitter() +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  scale_x_log10() +
+  annotation_logticks(sides="b") + 
+  labs(y = expression(paste(Delta, "MI (bits)")),
+       x = "Population size",
+       title = "Model: CHING") +
+  theme_classic() +
+  theme(strip.background = element_blank()) +
+  theme(legend.background = element_rect(colour ="black")) +
+  theme(legend.key.size = unit(.3, "cm")) +
+  theme(panel.spacing = unit(1, "lines")) +
+  theme(strip.text.x = element_text(face = "bold")) +
+  theme(plot.title = element_text(size = 11, face = "bold")) -> o3
+print(o3)
+```
+
+```{r, fig.width=8, fig.height=3, echo=FALSE, warning=FALSE, message=FALSE}
+dmi_exp43 %>% 
+  filter(num_pop >= 40) %>% 
+  ggplot(aes(x=num_pop, y=E)) +
+  geom_jitter() +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  scale_x_log10() +
+  annotation_logticks(sides="b") + 
+  labs(y = expression(paste(Delta, "MI (bits)")),
+       x = "Population size",
+       title = "Model: CHING") +
+  theme_classic() +
+  theme(strip.background = element_blank()) +
+  theme(legend.background = element_rect(colour ="black")) +
+  theme(legend.key.size = unit(.3, "cm")) +
+  theme(panel.spacing = unit(1, "lines")) +
+  theme(strip.text.x = element_text(face = "bold")) +
+  theme(plot.title = element_text(size = 11, face = "bold")) +
+  facet_grid(.~stim_rate)
+```
+## dl2 
+### all
+```{r, fig.width=8, fig.height=3, echo=FALSE, warning=FALSE, message=FALSE}
+dl2_exp43 %>% 
+  filter(num_pop >= 40) %>% 
+  group_by(num_pop) %>% 
+  summarise(M=mean(E), SD=sd(E)) %>%
+  ggplot(aes(x=num_pop, y=M)) +
+  geom_ribbon(aes(ymin = M-SD, ymax = M+SD), fill="grey", alpha=0.4) +
+  geom_line(size=0.8, alpha=1) +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  scale_x_log10() +
+  annotation_logticks(sides="b") + 
+  labs(y = "Error",
+       x = "Population size",
+       title = "Model: CHING") +
+  theme_classic() +
+  theme(strip.background = element_blank()) +
+  theme(legend.background = element_rect(colour ="black")) +
+  theme(legend.key.size = unit(.3, "cm")) +
+  theme(panel.spacing = unit(1, "lines")) +
+  theme(strip.text.x = element_text(face = "bold")) +
+  theme(plot.title = element_text(size = 11, face = "bold")) -> e3
+print(e3)
+```
+
+### mean/stim_rate
+```{r, fig.width=8, fig.height=3, echo=FALSE, warning=FALSE, message=FALSE}
+dl2_exp43 %>% 
+  filter(num_pop >= 40) %>% 
+  group_by(num_pop, stim_rate) %>% 
+  summarise(M=mean(E), SD=sd(E)) %>%
+  ggplot(aes(x=num_pop, y=M)) +
+  geom_ribbon(aes(ymin = M-SD, ymax = M+SD), fill="grey", alpha=0.4) +
+  geom_line(size=0.8, alpha=1) +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  scale_x_log10() +
+  annotation_logticks(sides="b") + 
+  labs(y = "Error",
+       x = "Population size",
+       title = "Model: CHING") +
+  theme_classic() +
+  theme(strip.background = element_blank()) +
+  theme(legend.background = element_rect(colour ="black")) +
+  theme(legend.key.size = unit(.3, "cm")) +
+  theme(panel.spacing = unit(1, "lines")) +
+  theme(strip.text.x = element_text(face = "bold")) +
+  theme(plot.title = element_text(size = 11, face = "bold")) + 
+  facet_grid(.~stim_rate) 
+```
+
+### jitter
+```{r, fig.width=3, fig.height=3, echo=FALSE, warning=FALSE, message=FALSE}
+dl2_exp43 %>% 
+  filter(num_pop >= 40) %>% 
+  ggplot(aes(x=num_pop, y=E)) +
+  geom_jitter() +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  scale_x_log10() +
+  annotation_logticks(sides="b") + 
+  labs(y = "Error",
+       x = "Population size",
+       title = "Model: CHING") +
+  theme_classic() +
+  theme(strip.background = element_blank()) +
+  theme(legend.background = element_rect(colour ="black")) +
+  theme(legend.key.size = unit(.3, "cm")) +
+  theme(panel.spacing = unit(1, "lines")) +
+  theme(strip.text.x = element_text(face = "bold")) +
+  theme(plot.title = element_text(size = 11, face = "bold")) -> d3
+print(d3)
+```
+
+```{r, fig.width=8, fig.height=3, echo=FALSE, warning=FALSE, message=FALSE}
+dl2_exp43 %>% 
+  filter(num_pop >= 40) %>% 
+  ggplot(aes(x=num_pop, y=E)) +
+  geom_jitter() +
+  geom_hline(yintercept=0, color="grey") + xlab("") +
+  scale_x_log10() +
+  annotation_logticks(sides="b") + 
+  labs(y = "Error",
+       x = "Population size",
+       title = "Model: CHING") +
+  theme_classic() +
+  theme(strip.background = element_blank()) +
+  theme(legend.background = element_rect(colour ="black")) +
+  theme(legend.key.size = unit(.3, "cm")) +
+  theme(panel.spacing = unit(1, "lines")) +
+  theme(strip.text.x = element_text(face = "bold")) +
+  theme(plot.title = element_text(size = 11, face = "bold")) +
+  facet_grid(.~stim_rate)
+```
+
+# MI - Join
+## Mean
+```{r, fig.width=8, fig.height=2, echo=FALSE, warning=FALSE, message=FALSE}
+p1 + p2 + p3 +
+  plot_annotation(
+    tag_levels = 'a',
+    tag_suffix = ".",
+  )
+```
+## Scatter
+```{r, fig.width=8, fig.height=4, echo=FALSE, warning=FALSE, message=FALSE}
+o1 + o2 + o3 +
+  plot_annotation(
+    tag_levels = 'a',
+    tag_suffix = ".",
+  )
+```
+
+# L2 - Join
+## Mean
+```{r, fig.width=8, fig.height=2, echo=FALSE, warning=FALSE, message=FALSE}
+e1 + e2 + e3 +
+  plot_annotation(
+    tag_levels = 'a',
+    tag_suffix = ".",
+  )
+```
+
+## Jitter
+```{r, fig.width=8, fig.height=4, echo=FALSE, warning=FALSE, message=FALSE}
+d1 + d2 + d3 +
+  plot_annotation(
+    tag_levels = 'a',
+    tag_suffix = ".",
+  )
+```
