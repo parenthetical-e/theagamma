@@ -47,6 +47,25 @@ for(stim_rate in stim_rates){
     dmi_exp4 <- bind_rows(df, dmi_exp4)
   }
 }
+dl2_exp4 <- NULL
+for(stim_rate in stim_rates){
+  for (num_pop in num_pops) {
+    file_name <-
+      paste(
+        path,
+        "sample",
+        stim_rate,
+        "_",
+        num_pop,
+        "_dl2.csv",
+        sep = ""
+      )
+    df <- read.csv(file_name)
+    df$stim_rate <- as.numeric(stim_rate)
+    df$model <- "ING"
+    dl2_exp4 <- bind_rows(df, dl2_exp4)
+  }
+}
 
 # exp5
 # path <- "~/Code/theagamma/data/exp5/"
@@ -68,6 +87,25 @@ for(stim_rate in stim_rates){
     df$stim_rate <- as.numeric(stim_rate)
     df$model <- "PING"
     dmi_exp5 <- bind_rows(df, dmi_exp5)
+  }
+}
+dl2_exp5 <- NULL
+for(stim_rate in stim_rates){
+  for (num_pop in num_pops) {
+    file_name <-
+      paste(
+        path,
+        "sample",
+        stim_rate,
+        "_",
+        num_pop,
+        "_dl2.csv",
+        sep = ""
+      )
+    df <- read.csv(file_name)
+    df$stim_rate <- as.numeric(stim_rate)
+    df$model <- "PING"
+    dl2_exp5 <- bind_rows(df, dl2_exp5)
   }
 }
 
@@ -93,6 +131,26 @@ for(stim_rate in stim_rates){
     dmi_exp6 <- bind_rows(df, dmi_exp6)
   }
 }
+dl2_exp6 <- NULL
+for(stim_rate in stim_rates){
+  for (num_pop in num_pops) {
+    file_name <-
+      paste(
+        path,
+        "sample",
+        stim_rate,
+        "_",
+        num_pop,
+        "_dl2.csv",
+        sep = ""
+      )
+    df <- read.csv(file_name)
+    df$stim_rate <- as.numeric(stim_rate)
+    df$model <- "CHING"
+    dl2_exp6 <- bind_rows(df, dl2_exp6)
+  }
+}
+
 
 # -- num_pop = big and small 
 # ING
@@ -521,7 +579,7 @@ tmp1$model <- factor(tmp1$model, levels=c("ING", "PING", "CHING"))
 # -----------------------------------------------
 # Jitter all
 tmp1 %>% 
-  # filter(stim_rate == 1) %>%
+  filter(stim_rate == 1) %>%
   ggplot(aes(x=model, y=E)) +
   geom_jitter(size=.1, alpha=0.4, width=0.3) +
   stat_summary(aes(group=model), fun.y=mean,
@@ -536,7 +594,7 @@ tmp1 %>%
 # -----------------------------------------------
 # Num. pop. sequence
 tmp1 %>%
-  # filter(stim_rate == 1) %>% 
+  filter(stim_rate == 1) %>%
   group_by(model, num_pop) %>%
   summarise(M=mean(E),
             SD=sd(E)) -> 
@@ -544,7 +602,6 @@ tmp1 %>%
 tmp2$model <- factor(tmp2$model, levels=c("ING", "PING", "CHING"))
 
 tmp2 %>% 
-  # ggplot(aes(x=num_pop,  y=m, color=factor(g), group=factor(g))) +
   ggplot(aes(x=as.numeric(num_pop), y=M)) +
   geom_line(size=0.7, alpha=1) +
   geom_ribbon(aes(ymin=M-SD, ymax=M+SD), alpha=0.2, color=NA) +
@@ -622,7 +679,7 @@ tmp2 %>%
        x = "Stimulus firing rate (spks/s)",
        title = "ING") +
   lims(y=c(-0.8, 0.3)) +
-  scale_color_manual("g", values = c(
+  scale_color_manual(expression(g[I]), values = c(
     "lightsteelblue3",
     "lightskyblue3",
     "steelblue3",
@@ -633,7 +690,7 @@ tmp2 %>%
     "mediumpurple4",
     "darkorchid4"
     )) +
-  scale_fill_manual("g", values = c(
+  scale_fill_manual(expression(g[I]), values = c(
     "lightsteelblue3",
     "lightskyblue3",
     "steelblue3",
@@ -676,7 +733,7 @@ tmp2 %>%
        x = "Stimulus firing rate (spks/s)",
        title = "PING (E to I)") +
   lims(y=c(-0.8, 0.3)) +
-  scale_color_manual("g", values = c(
+  scale_color_manual(expression(g[EI]), values = c(
     "lightsteelblue3",
     "lightskyblue3",
     "steelblue3",
@@ -687,7 +744,7 @@ tmp2 %>%
     "mediumpurple4",
     "darkorchid4"
     )) +
-  scale_fill_manual("g", values = c(
+  scale_fill_manual(expression(g[EI]), values = c(
     "lightsteelblue3",
     "lightskyblue3",
     "steelblue3",
@@ -729,7 +786,7 @@ tmp2 %>%
        x = "Stimulus firing rate (spks/s)",
        title = "PING (I to E)") +
   lims(y=c(-0.8, 0.3)) +
-  scale_color_manual("g", values = c(
+  scale_color_manual(expression(g[IE]), values = c(
     "lightsteelblue3",
     "lightskyblue3",
     "steelblue3",
@@ -740,7 +797,7 @@ tmp2 %>%
     "mediumpurple4",
     "darkorchid4"
     )) +
-  scale_fill_manual("g", values = c(
+  scale_fill_manual(expression(g[IE]), values = c(
     "lightsteelblue3",
     "lightskyblue3",
     "steelblue3",
@@ -782,7 +839,7 @@ tmp2 %>%
        x = "Stimulus firing rate (spks/s)",
        title = "CHING") +
   lims(y=c(-0.8, 0.3)) +
-  scale_color_manual("g", values = c(
+  scale_color_manual(expression(g[E]), values = c(
     "lightsteelblue3",
     "lightskyblue3",
     "steelblue3",
@@ -793,7 +850,7 @@ tmp2 %>%
     "mediumpurple4",
     "darkorchid4"
     )) +
-  scale_fill_manual("g", values = c(
+  scale_fill_manual(expression(g[E]), values = c(
     "lightsteelblue3",
     "lightskyblue3",
     "steelblue3",
@@ -905,7 +962,7 @@ tmp2 %>%
        x = "Stimulus firing rate (spks/s)",
        title = "ING") +
   lims(y=c(-0.8, 0.3)) +
-  scale_color_manual("g", values = c(
+  scale_color_manual(expression(g[I]), values = c(
     "lightsteelblue3",
     "lightskyblue3",
     "steelblue3",
@@ -916,7 +973,7 @@ tmp2 %>%
     "mediumpurple4",
     "darkorchid4"
     )) +
-  scale_fill_manual("g", values = c(
+  scale_fill_manual(expression(g[I]), values = c(
     "lightsteelblue3",
     "lightskyblue3",
     "steelblue3",
@@ -958,7 +1015,7 @@ tmp2 %>%
        x = "Stimulus firing rate (spks/s)",
        title = "PING (E to I)") +
   lims(y=c(-0.8, 0.3)) +
-  scale_color_manual("g", values = c(
+  scale_color_manual(expression(g[EI]), values = c(
     "lightsteelblue3",
     "lightskyblue3",
     "steelblue3",
@@ -969,7 +1026,7 @@ tmp2 %>%
     "mediumpurple4",
     "darkorchid4"
     )) +
-  scale_fill_manual("g", values = c(
+  scale_fill_manual(expression(g[EI]), values = c(
     "lightsteelblue3",
     "lightskyblue3",
     "steelblue3",
@@ -1011,7 +1068,7 @@ tmp2 %>%
        x = "Stimulus firing rate (spks/s)",
        title = "PING (I to E)") +
   lims(y=c(-0.8, 0.3)) +
-  scale_color_manual("g", values = c(
+  scale_color_manual(expression(g[IE]), values = c(
     "lightsteelblue3",
     "lightskyblue3",
     "steelblue3",
@@ -1022,7 +1079,7 @@ tmp2 %>%
     "mediumpurple4",
     "darkorchid4"
     )) +
-  scale_fill_manual("g", values = c(
+  scale_fill_manual(expression(g[IE]), values = c(
     "lightsteelblue3",
     "lightskyblue3",
     "steelblue3",
@@ -1064,7 +1121,7 @@ tmp2 %>%
        x = "Stimulus firing rate (spks/s)",
        title = "CHING") +
   lims(y=c(-0.8, 0.3)) +
-  scale_color_manual("g", values = c(
+  scale_color_manual(expression(g[E]), values = c(
     "lightsteelblue3",
     "lightskyblue3",
     "steelblue3",
@@ -1075,7 +1132,7 @@ tmp2 %>%
     "mediumpurple4",
     "darkorchid4"
     )) +
-  scale_fill_manual("g", values = c(
+  scale_fill_manual(expression(g[E]), values = c(
     "lightsteelblue3",
     "lightskyblue3",
     "steelblue3",
@@ -1119,8 +1176,7 @@ ggsave("figures/circuit3.pdf", dpi=300, width = 9, height = 8)
 ggsave("figures/circuit3.png", dpi=300, width = 9, height = 8)
 ```
 
-
-# Figure - tau 
+# Figure - tau (large and small)
 ```{r, fig.width=4, fig.height=8, echo=FALSE, warning=FALSE, message=FALSE}
 # ING
 dmi_exp45 %>%
@@ -1299,24 +1355,26 @@ ggsave(
 )
 ```
 
-# Figure - Error (pop_size) 
+# Figure - error (pop_size) 
+Supp. 
 ```{r, fig.width=8, fig.height=3, echo=FALSE, warning=FALSE, message=FALSE}
 tmp1 <- NULL
-tmp1 <- bind_rows(dmi_exp4, tmp1)
-tmp1 <- bind_rows(dmi_exp5, tmp1)
-tmp1 <- bind_rows(dmi_exp6, tmp1)
+tmp1 <- bind_rows(dl2_exp4, tmp1)
+tmp1 <- bind_rows(dl2_exp5, tmp1)
+tmp1 <- bind_rows(dl2_exp6, tmp1)
 tmp1$model <- factor(tmp1$model, levels=c("ING", "PING", "CHING"))
 
+# tmp1$E <- minmax_scaler(tmp1$E, -1, 1)
 # -----------------------------------------------
 # Jitter all
 tmp1 %>% 
-  # filter(stim_rate == 1) %>%
+  filter(stim_rate == 1) %>%
   ggplot(aes(x=model, y=E)) +
   geom_jitter(size=.1, alpha=0.4, width=0.3) +
   stat_summary(aes(group=model), fun.y=mean,
                geom="point", colour="black", alpha=1, size=14, shape="_") +
   geom_hline(yintercept=0, color="dark grey", size=0.5) + xlab("") +
-  labs(y=expression(paste(Delta, "MI (bits)")), x="Model", title="") +
+  labs(y="Error", x="Model", title="") +
   theme_classic() + 
   theme(plot.title = element_text(size = 7, hjust=3, face = "bold")) -> 
   p1
@@ -1325,7 +1383,7 @@ tmp1 %>%
 # -----------------------------------------------
 # Num. pop. sequence
 tmp1 %>%
-  # filter(stim_rate == 1) %>% 
+  filter(stim_rate == 1) %>%
   group_by(model, num_pop) %>%
   summarise(M=mean(E),
             SD=sd(E)) -> 
@@ -1333,14 +1391,13 @@ tmp1 %>%
 tmp2$model <- factor(tmp2$model, levels=c("ING", "PING", "CHING"))
 
 tmp2 %>% 
-  # ggplot(aes(x=num_pop,  y=m, color=factor(g), group=factor(g))) +
   ggplot(aes(x=as.numeric(num_pop), y=M)) +
   geom_line(size=0.7, alpha=1) +
   geom_ribbon(aes(ymin=M-SD, ymax=M+SD), alpha=0.2, color=NA) +
   geom_hline(yintercept=0, color="dark grey") + xlab("") +
   scale_x_log10() +
   annotation_logticks(sides="b") + 
-  labs(y=expression(paste(Delta, "MI (bits)")), x="Population size") +
+  labs(y="Error", x="Population size") +
   theme_classic() +
   theme(strip.background = element_blank()) +
   theme(legend.background = element_rect(colour ="black")) +
@@ -1355,6 +1412,6 @@ print(p2)
 # Build figure
 p1 + p2 + plot_layout(widths = c(0.2, 0.8)) +
   plot_annotation(tag_levels = 'a', tag_suffix = ".")
-ggsave("figures/circuit1.pdf", dpi=300, width = 8, height = 3)
-ggsave("figures/circuit1.png", dpi=300, width = 8, height = 3)
+ggsave("figures/circuit5.pdf", dpi=300, width = 8, height = 3)
+ggsave("figures/circuit5.png", dpi=300, width = 8, height = 3)
 ```
