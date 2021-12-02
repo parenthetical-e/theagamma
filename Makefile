@@ -627,7 +627,7 @@ exp45:
 	-parallel -j 40 -v \
 			--joblog 'data/exp45.log' \
 			--nice 19 --colsep ',' \
-			'python theagamma/sample.py data/exp45/sample-t{1}-s{2} {3} data/exp44/result-t{1}-s{2}*.pkl' ::: 5 5.2 5.3 5.4 5.6 5.8 6 6.2 6.4 ::: 0.5 1 1.5 2.0 2.5 3.0 ::: 1280 10240
+			'python theagamma/sample.py data/exp45/sample-t{1}-s{2} {3} data/exp44/result-t{1}-s{2}*.pkl' ::: 5 5.2 5.3 5.4 5.6 5.8 6 6.2 6.4 ::: 0.5 1 1.5 2.0 2.5 3.0 ::: 40 80 160 320 640 1280 2560 5120 10240
 
 # PING 
 # tau_e
@@ -655,7 +655,7 @@ exp47:
 	-parallel -j 40 -v \
 			--joblog 'data/exp47.log' \
 			--nice 19 --colsep ',' \
-			'python theagamma/sample.py data/exp47/sample-t{1}-s{2} {3} data/exp46/result-t{1}-s{2}*.pkl' ::: 1 1.2 1.3 1.4 1.6 1.8 2 2.2 2.4  ::: 0.5 1 1.5 2.0 2.5 3.0 ::: 1280 10240
+			'python theagamma/sample.py data/exp47/sample-t{1}-s{2} {3} data/exp46/result-t{1}-s{2}*.pkl' ::: 1 1.2 1.3 1.4 1.6 1.8 2 2.2 2.4  ::: 0.5 1 1.5 2.0 2.5 3.0 ::: 40 80 160 320 640 1280 2560 5120 10240
 
 # tau_i
 exp48: 
@@ -681,7 +681,7 @@ exp49:
 	-parallel -j 40 -v \
 			--joblog 'data/exp49.log' \
 			--nice 19 --colsep ',' \
-			'python theagamma/sample.py data/exp49/sample-t{1}-s{2} {3} data/exp48/result-t{1}-s{2}*.pkl' ::: 6.5 6.75 7.0 7.25 7.5 7.75 8.0 8.25 8.5 ::: 0.5 1 1.5 2.0 2.5 3.0 ::: 1280 10240 
+			'python theagamma/sample.py data/exp49/sample-t{1}-s{2} {3} data/exp48/result-t{1}-s{2}*.pkl' ::: 6.5 6.75 7.0 7.25 7.5 7.75 8.0 8.25 8.5 ::: 0.5 1 1.5 2.0 2.5 3.0 ::: 40 80 160 320 640 1280 2560 5120 10240 
 
 # CHING
 # tau_e
@@ -708,7 +708,7 @@ exp51:
 	-parallel -j 40 -v \
 			--joblog 'data/exp51.log' \
 			--nice 19 --colsep ',' \
-			'python theagamma/sample.py data/exp51/sample-t{1}-s{2} {3} data/exp50/result-t{1}-s{2}*.pkl' ::: 4.0 4.25 4.5 4.75 5 5.25 5.5 5.75 6.0  ::: 0.5 1 1.5 2.0 2.5 3.0 ::: 160 10240
+			'python theagamma/sample.py data/exp51/sample-t{1}-s{2} {3} data/exp50/result-t{1}-s{2}*.pkl' ::: 4.0 4.25 4.5 4.75 5 5.25 5.5 5.75 6.0  ::: 0.5 1 1.5 2.0 2.5 3.0 ::: 40 80 160 320 640 1280 2560 5120 10240
 
 
 #  -------------------------------------------------------------------------
@@ -740,7 +740,7 @@ exp53:
 	-parallel -j 40 -v \
 			--joblog 'data/exp53.log' \
 			--nice 19 --colsep ',' \
-			'python theagamma/sample.py data/exp53/sample-g{1}-s{2} {3} data/exp52/result-g{1}-s{2}*.pkl' ::: 3 3.5 4 4.5 5 5.5 6.0 6.5 7.0 ::: 0.5 1 1.5 2.0 2.5 3.0 ::: 1280 10240
+			'python theagamma/sample.py data/exp53/sample-g{1}-s{2} {3} data/exp52/result-g{1}-s{2}*.pkl' ::: 3 3.5 4 4.5 5 5.5 6.0 6.5 7.0 ::: 0.5 1 1.5 2.0 2.5 3.0 ::: 40 80 160 320 640 1280 2560 5120 10240
 
 # PING 
 # ei
@@ -765,7 +765,7 @@ exp55:
 	-parallel -j 40 -v \
 			--joblog 'data/exp55.log' \
 			--nice 19 --colsep ',' \
-			'python theagamma/sample.py data/exp55/sample-g{1}-s{2} {3} data/exp54/result-g{1}-s{2}*.pkl' ::: 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4  ::: 0.5 1 1.5 2.0 2.5 3.0 ::: 1280 10240
+			'python theagamma/sample.py data/exp55/sample-g{1}-s{2} {3} data/exp54/result-g{1}-s{2}*.pkl' ::: 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4  ::: 0.5 1 1.5 2.0 2.5 3.0 ::: 40 80 160 320 640 1280 2560 5120 10240
 
 # ie
 exp56: 
@@ -789,7 +789,7 @@ exp57:
 	-parallel -j 40 -v \
 			--joblog 'data/exp57.log' \
 			--nice 19 --colsep ',' \
-			'python theagamma/sample.py data/exp57/sample-g{1}-s{2} {3} data/exp56/result-g{1}-s{2}*.pkl' ::: 3 3.5 4 4.5 5 5.5 6.0 6.5 7.0 ::: 0.5 1 1.5 2.0 2.5 3.0 ::: 1280 10240 
+			'python theagamma/sample.py data/exp57/sample-g{1}-s{2} {3} data/exp56/result-g{1}-s{2}*.pkl' ::: 3 3.5 4 4.5 5 5.5 6.0 6.5 7.0 ::: 0.5 1 1.5 2.0 2.5 3.0 ::: 40 80 160 320 640 1280 2560 5120 10240 
 
 # CHING
 exp58: 
@@ -813,5 +813,5 @@ exp59:
 	-parallel -j 40 -v \
 			--joblog 'data/exp59.log' \
 			--nice 19 --colsep ',' \
-			'python theagamma/sample.py data/exp59/sample-g{1}-s{2} {3} data/exp58/result-g{1}-s{2}*.pkl' ::: 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4  ::: 0.5 1 1.5 2.0 2.5 3.0 ::: 160 10240
+			'python theagamma/sample.py data/exp59/sample-g{1}-s{2} {3} data/exp58/result-g{1}-s{2}*.pkl' ::: 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4  ::: 0.5 1 1.5 2.0 2.5 3.0 ::: 40 80 160 320 640 1280 2560 5120 10240
 
