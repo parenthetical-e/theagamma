@@ -61,10 +61,38 @@ def run(output_name, n, *file_names):
         H["E"].append(discrete_entropy(y, m))
         l2["E"].append(l2_error(y_ref, y))
 
+        # I calcs
+        ts, ns = res["spikes"]["I"]
+        idx = np.random.randint(ns.min(), ns.max(), size=n)
+        ns, ts = select_n(idx, ns, ts)
+        # Convert to rates
+        mat = to_spikemat(ns, ts, simultation_time, ns.max(), dt)
+        # Convert to y, do MI
+        y = normalize(mat.sum(1))
+        MI["I"].append(discrete_mutual_information(y_ref, y, m))
+        H["I"].append(discrete_entropy(y, m))
+        l2["I"].append(l2_error(y_ref, y))
+
+        # E+I calcs
+        ts, ns = res["spikes"]["osc"]
+        idx = np.random.randint(ns.min(), ns.max(), size=n)
+        ns, ts = select_n(idx, ns, ts)
+        # Convert to rates
+        mat = to_spikemat(ns, ts, simultation_time, ns.max(), dt)
+        # Convert to y, do MI
+        y = normalize(mat.sum(1))
+        MI["osc"].append(discrete_mutual_information(y_ref, y, m))
+        H["osc"].append(discrete_entropy(y, m))
+        l2["osc"].append(l2_error(y_ref, y))
+
         # Delta MI
         dMI["stim_p"].append(MI["stim_p"][-1] - MI["stim_p"][-1])
         dMI["E"].append(MI["E"][-1] - MI["stim_p"][-1])
         dl2["E"].append(l2["E"][-1] - l2["stim_p"][-1])
+        dMI["I"].append(MI["I"][-1] - MI["stim_p"][-1])
+        dl2["I"].append(l2["I"][-1] - l2["stim_p"][-1])
+        dMI["osc"].append(MI["osc"][-1] - MI["stim_p"][-1])
+        dl2["osc"].append(l2["osc"][-1] - l2["stim_p"][-1])
 
         # Metadata
         H["file_index"].append(i)
