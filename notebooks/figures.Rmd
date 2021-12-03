@@ -1389,6 +1389,16 @@ print(p2)
 # Build figure
 p1 + p2 + plot_layout(widths = c(0.2, 0.8)) +
   plot_annotation(tag_levels = 'a', tag_suffix = ".")
-ggsave("figures/circuit5.pdf", dpi=300, width = 8, height = 3)
-ggsave("figures/circuit5.png", dpi=300, width = 8, height = 3)
+ggsave(
+  "figures/circuit5.pdf",
+  dpi = 300,
+  width = 8,
+  height = 3
+)
+ggsave(
+  "figures/circuit5.png",
+  dpi = 300,
+  width = 8,
+  height = 3
+)
 ```
