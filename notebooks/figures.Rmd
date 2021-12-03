@@ -1351,7 +1351,7 @@ tmp1 %>%
   stat_summary(aes(group=model), fun.y=mean,
                geom="point", colour="black", alpha=1, size=14, shape="_") +
   geom_hline(yintercept=0, color="dark grey", size=0.5) + xlab("") +
-  labs(y="Total error", x="Model", title="") +
+  labs(y=expression(paste(Delta, "L")), x="Model", title="") +
   theme_classic() + 
   theme(plot.title = element_text(size = 7, hjust=3, face = "bold")) -> 
   p1
@@ -1374,7 +1374,7 @@ tmp2 %>%
   geom_hline(yintercept=0, color="dark grey") + xlab("") +
   scale_x_log10() +
   annotation_logticks(sides="b") + 
-  labs(y="Total error", x="Population size") +
+  labs(y=expression(paste(Delta, "L")), x="Population size") +
   theme_classic() +
   theme(strip.background = element_blank()) +
   theme(legend.background = element_rect(colour ="black")) +
