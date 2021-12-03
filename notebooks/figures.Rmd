@@ -15,6 +15,7 @@ library(png)
 library(psd)
 library(tidyr)
 library(patchwork)
+library(bspec)
 ```
 
 # Load data
@@ -390,182 +391,158 @@ for(g in taus){
     }
   }
 }
+
+# EXAMPLES ------------------------------------------------------------
+ref1 <- read_csv("../data/test_ing_ref.csv")
+stim1 <- read_csv("../data/test_ing_stim.csv")
+ing1 <- read_csv("../data/test_ing_osc.csv")
+ing2 <- read_csv("../data/test_ing_oscspks.csv")
+ing3 <- read_csv("../data/test_ing_spec.csv")
+ping1 <- read_csv("../data/test_ping_osc.csv")
+ping2 <- read_csv("../data/test_ping_oscspks.csv")
+ping3 <- read_csv("../data/test_ping_spec.csv")
+ching1 <- read_csv("../data/test_ching_osc.csv")
+ching2 <- read_csv("../data/test_ching_oscspks.csv")
+ching3 <- read_csv("../data/test_ching_spec.csv")
 ```
 
 
 # Figure - Examples 
-# ^TODO
-```{r, fig.width=3, fig.height=5.4, echo=FALSE, warning=FALSE, message=FALSE}
-examples <- read_csv("../data/examples.csv")
-
-# S
-examples %>% 
-  ggplot(aes(x=times, y=stim_ref)) +
-  geom_line(color="darkgrey", size=1.1) +
-  scale_y_continuous(breaks=c(0, 0.5, 1), limits=c(0, 1)) +
-  theme_classic2() + 
-  labs(x="", y="Norm. rate", tag="a.", title="Stimulus") + 
+```{r, fig.width=10, fig.height=7, echo=FALSE, warning=FALSE, message=FALSE}
+# -- S
+ref1 %>%
+  ggplot(aes(x = times, y = rate)) +
+  geom_line(color = "darkgrey", size = 1.1) +
+  scale_y_continuous(breaks = c(0, 0.5, 1), limits = c(0, 1)) +
+  theme_classic() +
+  labs(x = "",
+       y = "Norm. rate",
+       tag = "a.",
+       title = "Stimulus") +
   theme(plot.title = element_text(size = 9, face = "bold")) ->
-p4
+  s1
 
-examples %>% 
-  select(stim_ref) %>% 
- welchPSD(seglength=1000) -> spec
-spec <- data.frame(frequency=spec$frequency*1000, power=spec$power)
-spec %>% 
-  filter(frequency < 25) %>% 
-ggplot(aes(x=frequency, y=log10(power))) +
-  geom_line(size=0.8, color="darkgrey") +
-  labs(x="", y="Power", tag="h.") +
-  lims(y=c(-3,2)) +
-  theme_classic2() +
-  theme(plot.title = element_text(size = 9, hjust=1, face = "bold")) -> s4
-
-# O
-examples %>% 
-  ggplot(aes(x=times, y=osc_p)) +
-  geom_line(aes(x=times, y=osc_ref), color="darkgrey") +
-  geom_line(size=1.2) +
-  scale_y_continuous(breaks=c(0, 0.5, 1), limits=c(0, 1)) +
-  theme_classic2() + 
-  labs(x="", y="Norm. rate", tag="c.", title="Pacemaker (O)") +
-  theme(plot.title = element_text(size = 9, face = "bold")) ->
-p5
-
-examples %>% 
-  select(osc_p) %>% 
- welchPSD(seglength=1000) -> spec
-spec <- data.frame(frequency=spec$frequency*1000, power=spec$power)
-spec %>% 
-  filter(frequency < 25) %>% 
-ggplot(aes(x=frequency, y=log10(power))) +
-  geom_line(size=0.8) +
-  labs(x="", y="Power", tag="j.") +
-  lims(y=c(-3,2.1)) +
-  theme_classic2() -> s5
+ref1 %>%
+  select(rate) %>%
+  welchPSD(seglength = 10000) -> spec
+spec <- data.frame(frequency = spec$frequency * 10000,
+                   power = spec$power)
+spec %>%
+  filter(frequency < 60) %>%
+  ggplot(aes(x = frequency, y = log10(power))) +
+  geom_line(size = 1, color = "darkgrey") +
+  labs(x = "", y = "Power") +
+  lims(y = c(-3, 2)) +
+  theme_classic() +
+  theme(plot.title = element_text(size = 9, face = "bold")) -> p1
 
 
-# S
-examples %>% 
-  ggplot(aes(x=times, y=stim_p)) +
-  geom_line() +
-  # geom_line(aes(x=times, y=stim_ref), color="darkgrey", size=1.1) +
-  scale_y_continuous(breaks=c(0, 0.5, 1), limits=c(0, 1)) +
-  theme_classic2() + 
-  labs(x="", y="Norm. rate", tag="b.",  title="Unmodulated (S)") +
-  theme(plot.title = element_text(size = 9, face = "bold")) ->
-p9
+# -- ING
+ing1 %>%
+  filter(times > 0.25) %>%
+  ggplot(aes(x = times, y = rate)) +
+  geom_line(size = 1.2) +
+  theme_classic() +
+  labs(x = "", y = "Rate (spk/s)", title = "ING") +
+  theme(plot.title = element_text(size = 9, face = "bold")) -> s2
 
-examples %>% 
-  select(stim_p) %>% 
- welchPSD(seglength=1000) -> spec
-spec <- data.frame(frequency=spec$frequency*1000, power=spec$power)
-spec %>% 
-  filter(frequency < 25) %>% 
-ggplot(aes(x=frequency, y=log10(power))) +
-  geom_line(size=0.8, color="black") +
-  labs(x="", y="Power", tag="i.") +
-  lims(y=c(-3,2)) +
-  theme_classic2() -> s9
+ing2 %>%
+  filter(ns <= 10240) %>%
+  ggplot(aes(x = ts, y = ns)) +
+  geom_point(size = 0.2) +
+  theme_classic() +
+  labs(x = "", y = "N") +
+  lims(x = c(2, 3)) +
+  theme(plot.title = element_text(size = 9, face = "bold")) -> k2
 
-# EI
-examples %>% 
-  ggplot(aes(x=times, y=mult_p)) +
-  geom_line() +
-  # geom_line(aes(x=times, y=stim_ref), color="darkgrey", size=1.1) +
-  scale_y_continuous(breaks=c(0, 0.5, 1), limits=c(0, 1)) +
-  theme_classic2() + 
-  labs(x="", y="Norm. rate", tag="e.", title="Multiplicative (EI)") +
-  theme(plot.title = element_text(size = 9, face = "bold")) -> 
-p6
+ing3 %>%
+  filter(freq < 60) %>%
+  ggplot(aes(x = freq, y = spectrum)) +
+  geom_line(size = 0.8) +
+  labs(x = "", y = "Power") +
+  theme_classic() +
+  theme(plot.title = element_text(size = 9, face = "bold")) -> p2
 
-examples %>% 
-  select(mult_p) %>% 
- welchPSD(seglength=1000) -> spec
-spec <- data.frame(frequency=spec$frequency*1000, power=spec$power)
-spec %>% 
-  filter(frequency < 25) %>% 
-ggplot(aes(x=frequency, y=log10(power))) +
-  geom_line(size=0.8, color="black") +
-  labs(x="", y="Power", tag="l.") +
-  lims(y=c(-3,2)) +
-  theme_classic2() -> s6
+# -- PING
+ping1 %>%
+  filter(times > 0.25) %>%
+  ggplot(aes(x = times, y = rate)) +
+  geom_line(size = 1.2) +
+  theme_classic() +
+  labs(x = "", y = "Rate (spk/s)", title = "PING") +
+  theme(plot.title = element_text(size = 9, face = "bold")) -> s3
 
-# E
-examples %>% 
-  ggplot(aes(x=times, y=add_p)) +
-  geom_line() +
-  # geom_line(aes(x=times, y=stim_ref), color="darkgrey", size=1.1) +
-  scale_y_continuous(breaks=c(0, 0.5, 1), limits=c(0, 1)) +
-  theme_classic2() + 
-  labs(x="", y="Norm. rate", tag="d.", title="Additive (E)") +
-  theme(plot.title = element_text(size = 9, face = "bold")) ->
-p7
+ping2 %>%
+  filter(ns <= 10240) %>%
+  ggplot(aes(x = ts, y = ns)) +
+  geom_point(size = 0.2) +
+  theme_classic() +
+  labs(x = "", y = "N") +
+  lims(x = c(2, 3)) +
+  theme(plot.title = element_text(size = 9, face = "bold")) -> k3
 
-examples %>% 
-  select(add_p) %>% 
- welchPSD(seglength=1000) -> spec
-spec <- data.frame(frequency=spec$frequency*1000, power=spec$power)
-spec %>% 
-  filter(frequency < 25) %>% 
-ggplot(aes(x=frequency, y=log10(power))) +
-  geom_line(size=0.8, color="black") +
-  labs(x="", y="Power", tag="k.") +
-  lims(y=c(-3,2)) +
-  theme_classic2() -> s7
+ping3 %>%
+  filter(freq < 60) %>%
+  ggplot(aes(x = freq, y = spectrum)) +
+  geom_line(size = 0.8) +
+  labs(x = "", y = "Power") +
+  theme_classic() +
+  theme(plot.title = element_text(size = 9, face = "bold")) -> p3
 
+# -- CHING
+ching1 %>%
+  filter(times > 0.25) %>%
+  ggplot(aes(x = times, y = rate)) +
+  geom_line(size = 1.2) +
+  theme_classic() +
+  labs(x = "Time (s)",
+       y = "Rate (spk/s)",
+       title = "CHING") +
+  theme(plot.title = element_text(size = 9, face = "bold")) -> s4
 
-# I
-examples %>% 
-  ggplot(aes(x=times, y=sub_p)) +
-  geom_line() +
-  # geom_line(aes(x=times, y=stim_ref), color="darkgrey", size=1.2) +
-  scale_y_continuous(breaks=c(0, 0.5, 1), limits=c(0, 1)) +
-  theme_classic2() + 
-  labs(x="", y="Norm. rate", tag="f.", title="Subtractive (I)") +
-  theme(plot.title = element_text(size = 9, face = "bold")) ->
-p8
+ching2 %>%
+  filter(ns <= 10240) %>%
+  ggplot(aes(x = ts, y = ns)) +
+  geom_point(size = 0.02) +
+  theme_classic() +
+  labs(x = "Time (s)", y = "N") +
+  lims(x = c(2, 3)) +
+  theme(plot.title = element_text(size = 9, face = "bold")) -> k4
 
-examples %>% 
-  select(sub_p) %>% 
- welchPSD(seglength=1000) -> spec
-spec <- data.frame(frequency=spec$frequency*1000, power=spec$power)
-spec %>% 
-  filter(frequency < 25) %>% 
-ggplot(aes(x=frequency, y=log10(power))) +
-  geom_line(size=0.8, color="black") +
-  labs(x="", y="Power", tag="m.") +
-  lims(y=c(-3,2)) +
-  theme_classic2() -> s8
+ching3 %>%
+  filter(freq < 60) %>%
+  ggplot(aes(x = freq, y = spectrum)) +
+  geom_line(size = 0.8) +
+  labs(x = "Frequency (Hz)", y = "Power") +
+  theme_classic() +
+  theme(plot.title = element_text(size = 9, face = "bold")) -> p4
 
-# II
-examples %>% 
-  ggplot(aes(x=times, y=div_sub_p)) +
-  geom_line() +
-  scale_y_continuous(breaks=c(0, 0.5, 1), limits=c(0, 1)) +
-  labs(x="Time (s)", y="Norm. rate", tag="g.", title="Subtractive/divisive (II)") +
-  theme_classic2() + 
-  theme(plot.title = element_text(size = 9, face = "bold")) ->
-p10
+# Build --------------------------------------------------------------------  
+layout <- "
+AAA###B
+CCCDDDE
+FFFGGGH
+IIIJJJK
+"
+s1 + p1 + s2 + k2 + p2 + s3 + k3 + p3 + s4 + k4 + p4 +
+  plot_annotation(
+    tag_levels = 'a',
+    tag_suffix = "."
+  ) +
+plot_layout(design = layout)
 
-examples %>% 
-  select(div_sub_p) %>% 
- welchPSD(seglength=1000) -> spec
-spec <- data.frame(frequency=spec$frequency*1000, power=spec$power)
-spec %>% 
-  filter(frequency < 25) %>% 
-ggplot(aes(x=frequency, y=log10(power))) +
-  geom_line(size=0.8, color="black") +
-  labs(x="Frequency (Hz)", y="Power", tag="n.") +
-  lims(y=c(-3,2)) +
-  theme_classic2() -> s10
-
-# --------------------------------------------------------------------  
-((p4 / p9 / p5 / p7 / p6 / p8 / p10) | (s4 / s9 / s5 / s7 / s6 / s8 / s10)) +
-  plot_layout(width = c(0.75, 0.25)) +
-  # plot_annotation(tag_levels = 'a', tag_suffix = ".")
-ggsave("figures/example.pdf", dpi=300, width=2*3, height=2*5.4)
-ggsave("figures/example.png", dpi=300, width=2*3, height=2*5.4)
+ggsave(
+  "figures/circuit_example.pdf",
+  dpi = 300,
+  width = 10,
+  height = 7
+)
+ggsave(
+  "figures/circuit_example.png",
+  dpi = 300,
+  width = 10,
+  height = 7
+)
 ```
 
 # Figure - num_pop - circuit 1 
@@ -1374,7 +1351,7 @@ tmp1 %>%
   stat_summary(aes(group=model), fun.y=mean,
                geom="point", colour="black", alpha=1, size=14, shape="_") +
   geom_hline(yintercept=0, color="dark grey", size=0.5) + xlab("") +
-  labs(y="Error", x="Model", title="") +
+  labs(y="Total error", x="Model", title="") +
   theme_classic() + 
   theme(plot.title = element_text(size = 7, hjust=3, face = "bold")) -> 
   p1
@@ -1397,7 +1374,7 @@ tmp2 %>%
   geom_hline(yintercept=0, color="dark grey") + xlab("") +
   scale_x_log10() +
   annotation_logticks(sides="b") + 
-  labs(y="Error", x="Population size") +
+  labs(y="Total error", x="Population size") +
   theme_classic() +
   theme(strip.background = element_blank()) +
   theme(legend.background = element_rect(colour ="black")) +
