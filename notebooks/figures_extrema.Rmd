@@ -6,7 +6,7 @@ output: html_notebook
 # Aim
 I have looking at mean dMI. It is interesting to also look at the min/max. These are the best/worst costs and so could be very relevant?
 
-# Libraries and helpers
+# Libs
 ```{r helper_fns, echo=FALSE, fig.width=6, fig.height=4, echo=FALSE, warning=FALSE, message=FALSE}
 library(ggplot2)
 library(grid)
@@ -15,129 +15,121 @@ library(plyr)
 library(readr)
 library(dplyr)
 library(png)
-library(bspec)
 library(psd)
 library(tidyr)
 library(patchwork)
-library(scales)
-library(ggpubr)
-library(cowplot)
-library(latex2exp)
-# library(NNTbiomarker)
-# library(bspec)
-
-load.data1 <- function(path, type, stim_rates, qs, num_pops, pns){
-  df <- NULL
-  for(r_s in stim_rates){
-    for(g in gs){
-      for(n in num_pops){
-        for(q in qs){
-          try({
-            name <- paste("stim_rate", as.character(r_s), 
-                          "_g", as.character(g),
-                          "_num_pop", as.character(n),
-                          "_q", as.character(q),
-                          "_", as.character(type), 
-                          ".csv", sep="")
-            di <- read.csv(paste(path, name, sep=""))
-            di["stim_rate"] <- rep(r_s, nrow(di))
-            di["g"] <- rep(g, nrow(di))
-            di["num_pop"] <- rep(n, nrow(di))
-            di["q"] <- rep(q, nrow(di))
-            di["trial"] <- 1:nrow(di)
-            df <- rbind(df, di)  
-          })  
-        }
-      }
-    }
-  }
-  df
-}
 ```
 
 # Load data
-```{r}
-path <- "~/Code/theoc/data/"
+```{r helper_fns, echo=FALSE, fig.width=6, fig.height=4, echo=FALSE, warning=FALSE, message=FALSE}
+# -- num_pop search-----------------------------------------------------------
+stim_rates <- c("0.5", "1", "1.5", "2.0", "2.5", "3.0")
+num_pops <- c('40', '80', '160', '320', '640', '1280', '2560', '5120', '10240')
 
-# -------------------------------------------------------
-# num_pop - all
-stim_rates <- c(10)
-gs <- c(1, 2, 3, 4, 5, 7, 8)
-# gs <- c(2, 4, 8)
-num_pops <- c(10, 20, 40, 80, 160, 320, 640, 1280, 2560, 5120, 10240, 20480, 40960)
-qs <- c("0.5")
+# ING
+# path <- "~/Code/theagamma/data/exp4/"
+path <- "~/Code/theagamma/data/exp41/"
+dmi_exp4 <- NULL
+for(stim_rate in stim_rates){
+  for (num_pop in num_pops) {
+    file_name <-
+      paste(
+        path,
+        "sample",
+        stim_rate,
+        "_",
+        num_pop,
+        "_dMI.csv",
+        sep = ""
+      )
+    df <- read.csv(file_name)
+    df$stim_rate <- as.numeric(stim_rate)
+    df$model <- "ING"
+    dmi_exp4 <- bind_rows(df, dmi_exp4)
+  }
+}
 
-exp_path <- paste(path, "/exp15/", sep="")
-mi_exp15 <- load.data1(exp_path, "MI", stim_rates, qs, num_pops, qs)
-dmi_exp15 <- load.data1(exp_path, "dMI", stim_rates, qs, num_pops, qs)
-h_exp15 <- load.data1(exp_path, "H", stim_rates, qs, num_pops, qs)
-pac_exp15 <- load.data1(exp_path, "PAC", stim_rates, qs, num_pops, qs)
-pow_exp15 <- load.data1(exp_path, "power", stim_rates, qs, num_pops, qs)
+# PING
+# path <- "~/Code/theagamma/data/exp5/"
+path <- "~/Code/theagamma/data/exp42/"
+dmi_exp5 <- NULL
+for(stim_rate in stim_rates){
+  for (num_pop in num_pops) {
+    file_name <-
+      paste(
+        path,
+        "sample",
+        stim_rate,
+        "_",
+        num_pop,
+        "_dMI.csv",
+        sep = ""
+      )
+    df <- read.csv(file_name)
+    df$stim_rate <- as.numeric(stim_rate)
+    df$model <- "PING"
+    dmi_exp5 <- bind_rows(df, dmi_exp5)
+  }
+}
+
+# CHING
+# path <- "~/Code/theagamma/data/exp6/"
+path <- "~/Code/theagamma/data/exp43/"
+dmi_exp6 <- NULL
+for(stim_rate in stim_rates){
+  for (num_pop in num_pops) {
+    file_name <-
+      paste(
+        path,
+        "sample",
+        stim_rate,
+        "_",
+        num_pop,
+        "_dMI.csv",
+        sep = ""
+      )
+    df <- read.csv(file_name)
+    df$stim_rate <- as.numeric(stim_rate)
+    df$model <- "CHING"
+    dmi_exp6 <- bind_rows(df, dmi_exp6)
+  }
+}
 ```
 
-# mean
-```{r, fig.width=4.6, fig.height=1.4, echo=FALSE, warning=FALSE, message=FALSE}
-# --------------------------------------------------------------
-my_comparisons <- list(
-  c("EI", "E"), c("EI", "I"), c("E", "I"),  c("EI", "II"), c("E", "II"), c("I", "II"))
+# Join data
+```{r}
+tmp1 <- NULL
+tmp1 <- bind_rows(dmi_exp4, tmp1)
+tmp1 <- bind_rows(dmi_exp5, tmp1)
+tmp1 <- bind_rows(dmi_exp6, tmp1)
+tmp1$model <- factor(tmp1$model, levels=c("ING", "PING", "CHING"))
+```
 
-# --------------------------------------------------------------
-my_comparisons <- list(
-  c("EI", "E"), c("EI", "I"), c("E", "I"),  c("EI", "II"), c("E", "II"), c("I", "II"))
-
-dmi_exp15 %>%
-  filter(stim_rate == 10) %>% 
-  group_by(num_pop, g) %>%
-  summarise(add_p=mean(add_p),
-            back_p=mean(back_p),
-            div_sub_p=mean(div_sub_p),
-            mult_p=mean(mult_p),
-            osc_p=mean(osc_p),
-            stim_p=mean(stim_p),
-            sub_p=mean(sub_p)) %>%
-  ungroup() %>% 
-  gather(model, mi, add_p:sub_p) %>% 
-  filter(model %in% c("add_p","mult_p", "sub_p", "div_sub_p")) -> tmp
-
-tmp$model <- revalue(tmp$model, c("mult_p"="EI", "add_p"="E", "sub_p"="I", "div_sub_p"="II")) 
-tmp$model <- factor(tmp$model, levels=c("E", "EI", "I", "II"))
-
-tmp %>% 
-  ggplot(aes(x=model, y=mi)) +
-  geom_jitter(size=.02, alpha=0.6, width=0.2) +
-  stat_summary(aes(group=model), fun.y=mean, 
-               geom="point", colour="black", alpha=1, size=10, shape="_") +
-  geom_hline(yintercept=0, color="dark grey", size=0.5) + xlab("") +
-  labs(y=expression(paste(Delta, "MI (bits)")), x="Model", title="Average case") +
+# Avg
+```{r, fig.width=8.6, fig.height=2.4, echo=FALSE, warning=FALSE, message=FALSE}
+tmp1 %>% 
+  filter(stim_rate == 1) %>%
+  ggplot(aes(x=model, y=E)) +
+  geom_jitter(size=.1, alpha=0.4, width=0.3) +
+  stat_summary(aes(group=model), fun.y=mean,
+               geom="point", colour="black", alpha=1, size=14, shape="_") +
+  geom_hline(yintercept=0, color="dark grey", size=0.5) + 
+  labs(title="Average case", y=expression(paste(Delta, "MI (bits)")), x="Model") +
   theme_classic() + 
-  theme(plot.title = element_text(size = 10, face = "bold")) -> 
+  theme(plot.title = element_text(size = 9, face = "bold")) -> 
   p1
 
-# ------------------------------------------------------------------------------
-dmi_exp15 %>%
-  filter(stim_rate == 10) %>% 
-  group_by(num_pop, g) %>%
-  summarise(add_p=mean(add_p),
-            back_p=mean(back_p),
-            div_sub_p=mean(div_sub_p),
-            mult_p=mean(mult_p),
-            osc_p=mean(osc_p),
-            stim_p=mean(stim_p),
-            sub_p=mean(sub_p)) %>% 
-  gather(model, mi, add_p:sub_p) %>% 
+tmp1 %>%
+  filter(stim_rate == 1) %>%
   group_by(model, num_pop) %>%
-  summarise(m=mean(mi), sd=sd(mi)) %>%
-  filter(model %in% c("add_p","mult_p", "sub_p", "div_sub_p")) -> 
-  tmp
+  summarise(M=mean(E),
+            SD=sd(E)) -> 
+  tmp2
+tmp2$model <- factor(tmp2$model, levels=c("ING", "PING", "CHING"))
 
-# Set by hand. 
-tmp$model <- revalue(tmp$model, c("mult_p"="EI", "add_p"="E", "sub_p"="I", "div_sub_p"="II")) 
-tmp$model <- factor(tmp$model, levels=c("E", "EI", "I", "II"))
-
-tmp %>% 
-  ggplot(aes(x=num_pop,  y=m)) +
-  geom_line(size=0.9, alpha=1) +
-  # geom_ribbon(aes(ymean=m-sd, ymax=m+sd), alpha=0.2, color="grey") +
+tmp2 %>% 
+  ggplot(aes(x=as.numeric(num_pop), y=M)) +
+  geom_line(size=0.7, alpha=1) +
   geom_hline(yintercept=0, color="dark grey") + xlab("") +
   scale_x_log10() +
   annotation_logticks(sides="b") + 
@@ -153,69 +145,33 @@ tmp %>%
 
 # --------------------------------------------------------------
 ## Build Figure
-r1 <- p1 + p2 + plot_layout(widths = c(0.15, 0.85)) 
+r1 <- p1 + p2 + plot_layout(widths = c(0.2, 0.8)) 
 print(r1)
 ```
 
 # min
-```{r, fig.width=4.6, fig.height=1.4, echo=FALSE, warning=FALSE, message=FALSE}
-# --------------------------------------------------------------
-my_comparisons <- list(
-  c("EI", "E"), c("EI", "I"), c("E", "I"),  c("EI", "II"), c("E", "II"), c("I", "II"))
-
-dmi_exp15 %>%
-  filter(stim_rate == 10) %>% 
-  group_by(num_pop, g) %>%
-  summarise(add_p=min(add_p),
-            back_p=min(back_p),
-            div_sub_p=min(div_sub_p),
-            mult_p=min(mult_p),
-            osc_p=min(osc_p),
-            stim_p=min(stim_p),
-            sub_p=min(sub_p)) %>%
-  ungroup() %>% 
-  gather(model, mi, add_p:sub_p) %>% 
-  filter(model %in% c("add_p","mult_p", "sub_p", "div_sub_p")) -> tmp
-
-tmp$model <- revalue(tmp$model, c("mult_p"="EI", "add_p"="E", "sub_p"="I", "div_sub_p"="II")) 
-tmp$model <- factor(tmp$model, levels=c("E", "EI", "I", "II"))
-
-tmp %>% 
-  ggplot(aes(x=model, y=mi)) +
-  geom_jitter(size=.02, alpha=0.6, width=0.2) +
-  stat_summary(aes(group=model), fun.y=min, 
-               geom="point", colour="black", alpha=1, size=10, shape="_") +
+```{r, fig.width=8.6, fig.height=2.4, echo=FALSE, warning=FALSE, message=FALSE}
+tmp1 %>% 
+  filter(stim_rate == 1) %>%
+  ggplot(aes(x=model, y=E)) +
+  geom_jitter(size=.1, alpha=0.4, width=0.3) +
+  stat_summary(aes(group=model), fun.y=min,
+               geom="point", colour="black", alpha=1, size=14, shape="_") +
   geom_hline(yintercept=0, color="dark grey", size=0.5) + xlab("") +
   labs(y=expression(paste(Delta, "MI (bits)")), x="Model", title="Worst case") +
   theme_classic() + 
-  theme(plot.title = element_text(size = 10, face = "bold")) -> 
+  theme(plot.title = element_text(size = 9, face = "bold")) -> 
   p3
-
-# ------------------------------------------------------------------------------
-dmi_exp15 %>%
-  filter(stim_rate == 10) %>% 
-  group_by(num_pop, g) %>%
-  summarise(add_p=min(add_p),
-            back_p=min(back_p),
-            div_sub_p=min(div_sub_p),
-            mult_p=min(mult_p),
-            osc_p=min(osc_p),
-            stim_p=min(stim_p),
-            sub_p=min(sub_p)) %>% 
-  gather(model, mi, add_p:sub_p) %>% 
+tmp1 %>%
+  filter(stim_rate == 1) %>%
   group_by(model, num_pop) %>%
-  summarise(m=min(mi), sd=sd(mi)) %>%
-  filter(model %in% c("add_p","mult_p", "sub_p", "div_sub_p")) -> 
-  tmp
+  summarise(M=min(E)) -> 
+  tmp2
+tmp2$model <- factor(tmp2$model, levels=c("ING", "PING", "CHING"))
 
-# Set by hand. 
-tmp$model <- revalue(tmp$model, c("mult_p"="EI", "add_p"="E", "sub_p"="I", "div_sub_p"="II")) 
-tmp$model <- factor(tmp$model, levels=c("E", "EI", "I", "II"))
-
-tmp %>% 
-  ggplot(aes(x=num_pop,  y=m)) +
-  geom_line(size=0.9, alpha=1) +
-  # geom_ribbon(aes(ymin=m-sd, ymax=m+sd), alpha=0.2, color="grey") +
+tmp2 %>% 
+  ggplot(aes(x=as.numeric(num_pop), y=M)) +
+  geom_line(size=0.7, alpha=1) +
   geom_hline(yintercept=0, color="dark grey") + xlab("") +
   scale_x_log10() +
   annotation_logticks(sides="b") + 
@@ -231,69 +187,31 @@ tmp %>%
 
 # --------------------------------------------------------------
 ## Build Figure
-r2 <- p3 + p4 + plot_layout(widths = c(0.15, 0.85)) 
+r2 <- p3 + p4 + plot_layout(widths = c(0.2, 0.8)) 
 print(r2)
 ```
 
-# max
-```{r, fig.width=4.6, fig.height=1.4, echo=FALSE, warning=FALSE, message=FALSE}
-# --------------------------------------------------------------
-my_comparisons <- list(
-  c("EI", "E"), c("EI", "I"), c("E", "I"),  c("EI", "II"), c("E", "II"), c("I", "II"))
-
-dmi_exp15 %>%
-  filter(stim_rate == 10) %>% 
-  group_by(num_pop, g) %>%
-  summarise(add_p=max(add_p),
-            back_p=max(back_p),
-            div_sub_p=max(div_sub_p),
-            mult_p=max(mult_p),
-            osc_p=max(osc_p),
-            stim_p=max(stim_p),
-            sub_p=max(sub_p)) %>%
-  ungroup() %>% 
-  gather(model, mi, add_p:sub_p) %>% 
-  filter(model %in% c("add_p","mult_p", "sub_p", "div_sub_p")) -> tmp
-
-tmp$model <- revalue(tmp$model, c("mult_p"="EI", "add_p"="E", "sub_p"="I", "div_sub_p"="II")) 
-tmp$model <- factor(tmp$model, levels=c("E", "EI", "I", "II"))
-
-tmp %>% 
-  ggplot(aes(x=model, y=mi)) +
-  geom_jitter(size=.02, alpha=0.6, width=0.2) +
-  stat_summary(aes(group=model), fun.y=max, 
-               geom="point", colour="black", alpha=1, size=10, shape="_") +
+```{r, fig.width=8.6, fig.height=2.4, echo=FALSE, warning=FALSE, message=FALSE}
+tmp1 %>% 
+  filter(stim_rate == 1) %>%
+  ggplot(aes(x=model, y=E)) +
+  geom_jitter(size=.1, alpha=0.4, width=0.3) +
+  stat_summary(aes(group=model), fun.y=max,
+               geom="point", colour="black", alpha=1, size=14, shape="_") +
   geom_hline(yintercept=0, color="dark grey", size=0.5) + xlab("") +
   labs(y=expression(paste(Delta, "MI (bits)")), x="Model", title="Best case") +
   theme_classic() + 
-  theme(plot.title = element_text(size = 10, face = "bold")) -> 
-  p5
-
-# ------------------------------------------------------------------------------
-dmi_exp15 %>%
-  filter(stim_rate == 10) %>% 
-  group_by(num_pop, g) %>%
-  summarise(add_p=max(add_p),
-            back_p=max(back_p),
-            div_sub_p=max(div_sub_p),
-            mult_p=max(mult_p),
-            osc_p=max(osc_p),
-            stim_p=max(stim_p),
-            sub_p=max(sub_p)) %>% 
-  gather(model, mi, add_p:sub_p) %>% 
+  theme(plot.title = element_text(size = 9, face = "bold")) -> p5
+tmp1 %>%
+  filter(stim_rate == 1) %>%
   group_by(model, num_pop) %>%
-  summarise(m=max(mi), sd=sd(mi)) %>%
-  filter(model %in% c("add_p","mult_p", "sub_p", "div_sub_p")) -> 
-  tmp
+  summarise(M=max(E)) -> 
+  tmp2
+tmp2$model <- factor(tmp2$model, levels=c("ING", "PING", "CHING"))
 
-# Set by hand. 
-tmp$model <- revalue(tmp$model, c("mult_p"="EI", "add_p"="E", "sub_p"="I", "div_sub_p"="II")) 
-tmp$model <- factor(tmp$model, levels=c("E", "EI", "I", "II"))
-
-tmp %>% 
-  ggplot(aes(x=num_pop,  y=m)) +
-  geom_line(size=0.9, alpha=1) +
-  # geom_ribbon(aes(ymax=m-sd, ymax=m+sd), alpha=0.2, color="grey") +
+tmp2 %>% 
+  ggplot(aes(x=as.numeric(num_pop), y=M)) +
+  geom_line(size=0.7, alpha=1) +
   geom_hline(yintercept=0, color="dark grey") + xlab("") +
   scale_x_log10() +
   annotation_logticks(sides="b") + 
@@ -304,23 +222,33 @@ tmp %>%
   theme(legend.key.size = unit(.3, "cm")) +
   theme(panel.spacing = unit(1, "lines")) +
   theme(strip.text.x = element_text(face = "bold")) +
-  facet_grid(.~model) ->
-  p6
-
+  facet_grid(.~model) -> p6
 
 # --------------------------------------------------------------
 ## Build Figure
-r3 <- p5 + p6 + plot_layout(widths = c(0.15, 0.85)) 
+r3 <- p5 + p6 + plot_layout(widths = c(0.2, 0.8)) 
 print(r3)
 ```
 
+
 # joint plot
-```{r, fig.width=4.2, fig.height=3.8, echo=FALSE, warning=FALSE, message=FALSE}
+```{r, fig.width=8, fig.height=7, echo=FALSE, warning=FALSE, message=FALSE}
 ## Build Figure
 r1 / r2 / r3 +
   plot_annotation(tag_levels = 'a', tag_suffix = ".",
-                  title="Population size: 40",
+                  # title="Population size: 1",
                   theme=theme(plot.title = element_text(size = 13, face = "bold")))
-ggsave("figures/extrema1.pdf", dpi=300)
-ggsave("figures/extrema1.png", dpi=300)
+
+ggsave(
+  "figures/circuit-extrema1.pdf",
+  dpi = 300,
+  width = 8,
+  height = 7
+)
+ggsave(
+  "figures/circuit-extrema1.png",
+  dpi = 300,
+  width = 8,
+  height = 7
+)
 ```
