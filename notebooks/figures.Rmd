@@ -532,13 +532,13 @@ s1 + p1 + s2 + k2 + p2 + s3 + k3 + p3 + s4 + k4 + p4 +
 plot_layout(design = layout)
 
 ggsave(
-  "figures/circuit_example.pdf",
+  "figures/circuit-example.pdf",
   dpi = 300,
   width = 10,
   height = 7
 )
 ggsave(
-  "figures/circuit_example.png",
+  "figures/circuit-example.png",
   dpi = 300,
   width = 10,
   height = 7
